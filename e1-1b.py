@@ -20,13 +20,13 @@ filename = str(sys.argv[1]) #+ ".fasta"
 fasta = open(filename)
 fastaSeq = fasta.read()
 
+# remove first line
+fastaSeq = fastaSeq.splitlines(True)[1:]
+fastaSeq = ''.join(fastaSeq)
 # remove "\n"
-fastaSeq = fastaSeq.replace("\n", "") 
+fastaSeq = fastaSeq.replace("\n", "")
 
-#numPalindromos9 = 0
-#numPalindromos11 = 0
-#listaPalindromos9 = []
-#listaPalindromos11 = []
+
 ocorrenciasPalindromos9 = {}
 ocorrenciasPalindromos11 = {}
 
@@ -50,4 +50,18 @@ for i in range(len(fastaSeq)-11):
 			ocorrenciasPalindromos11[subseq] = 1
 
 #print(ocorrenciasPalindromos11) # DEBUG
+
+
+# quantidade de palindromos de tamanho 9 e 11
+numPalindromos9 = len(ocorrenciasPalindromos9.keys())
+numPalindromos11 = len(ocorrenciasPalindromos11.keys())
+
+print("num de palindromos de tamanho 9: " + str(numPalindromos9))
+print("num de palindromos de tamanho 11: " + str(numPalindromos11))
+
+# numero de ocorencias de cada palindromo:
+# informacao contida nos dicionarios ocorrenciasPalindromos9 e ocorrenciasPalindromos11
+
+
+
 

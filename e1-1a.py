@@ -20,8 +20,12 @@ filename = str(sys.argv[1]) #+ ".fasta"
 fasta = open(filename)
 fastaSeq = fasta.read()
 
+# remove first line
+fastaSeq = fastaSeq.splitlines(True)[1:]
+fastaSeq = ''.join(fastaSeq)
 # remove "\n"
-fastaSeq = fastaSeq.replace("\n", "") 
+fastaSeq = fastaSeq.replace("\n", "")
+
 
 # quando nao mutada esta subsequencia e unica no Cromossomo 7
 mutated_subseq = "CAATTGAATAATTG"
@@ -41,3 +45,8 @@ for i in range(len(mutated_subseq)): # len(mutated_subseq) == 14
 		subseq = ''.join(s)
 		subseq_occurences = fastaSeq.count(subseq)
 		print(subseq + " ... " + str(subseq_occurences) + " occurences")
+
+
+
+
+
