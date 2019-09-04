@@ -39,7 +39,5 @@ for i in range(len(mutated_subseq)): # len(mutated_subseq) == 14
 		s = list(mutated_subseq)
 		s[i] = c
 		subseq = ''.join(s)
-		#print(subseq) # DEBUG
-		subseq_occurences = fastaSeq.count(mutated_subseq)
-		if(subseq_occurences == 1):
-			print("found it! ... " + subseq)
+		subseq_occurences = fastaSeq.count(subseq)
+		print(subseq + " ... " + str(subseq_occurences) + " occurences")
