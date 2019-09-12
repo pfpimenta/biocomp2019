@@ -26,6 +26,8 @@ fastaSeq = ''.join(fastaSeq)
 # remove "\n"
 fastaSeq = fastaSeq.replace("\n", "")
 
+#print(len(fastaSeq))
+fastaSeq = fastaSeq[:1000]
 
 # construct complementar DNA
 complementaryDNA = ''
