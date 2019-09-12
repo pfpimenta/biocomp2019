@@ -43,6 +43,13 @@ def needleman_wunsch(seq1, seq2):
 
 	# find the best alignment
 	# TODO
+	# start at the bottom right
+	i, j = size1-1, size2-1
+	while (i != 0 or j != 0):
+		up = point_matrix[i-1][j]
+		down = point_matrix[i][j-1]
+		diag = point_matrix[i-1][j-1]
+		pass
 			
 	# print score, alignment
 	# TODO
@@ -50,6 +57,9 @@ def needleman_wunsch(seq1, seq2):
 
 
 # main
+
+# read sequences
+# TODO
 
 # homo sapiens 
 seq_homo = "VLSPADKTNVKAA"
