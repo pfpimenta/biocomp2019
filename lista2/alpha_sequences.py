@@ -30,3 +30,14 @@ seq_trout = "XSLTAKDKSVVKAFWGKISGKADVVGAEALGRMLTAYPQTKTYFSHWADLSPGSGPVKKHGGIIMGA
 
 # sequence list
 seq_list = [seq_human, seq_horse, seq_deer, seq_cow, seq_pig, seq_wolf, seq_chicken, seq_trout]
+
+# sequences dict
+seq_dict = {}
+seq_dict["human"] = seq_human
+seq_dict["horse"] = seq_horse
+seq_dict["deer"] = seq_deer
+seq_dict["cow"] = seq_cow
+seq_dict["pig"] = seq_pig
+seq_dict["wolf"] = seq_wolf
+seq_dict["chicken"] = seq_chicken
+seq_dict["trout"] = seq_trout

@@ -17,6 +17,7 @@ def print_alignment( seq1, seq2):
 
 # returns the match score according to the BLOSUM62 matrix
 def get_blosum62_score(seq1, seq2):
+# https://gist.github.com/jwintersinger/1870047
 	return blosum62[seq1][seq2]
 
 # needleman_wunsch algorithm: global alignment of two sequences
