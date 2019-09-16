@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# exercicio 1a da lista 2 de Biologia Computacional
+# exercicio 2a da lista 2 de Biologia Computacional
 # Pedro Foletto Pimenta, setembro de 2019
 ###
 
@@ -14,6 +14,10 @@ from alpha_sequences import * # load data
 def print_alignment( seq1, seq2):
 	# TODO
 	pass
+
+# returns the match score according to the BLOSUM62 matrix
+def get_blosum62_score(seq1, seq2):
+	return blosum62[seq1][seq2]
 
 # needleman_wunsch algorithm: global alignment of two sequences
 def needleman_wunsch(seq1, seq2):
@@ -55,7 +59,7 @@ def needleman_wunsch(seq1, seq2):
 		diag = point_matrix[i-1][j-1]
 		pass
 			
-	# print point matrix
+	# print alignment table
 	print(point_matrix)
 	
 	# print aligned sequences
