@@ -5,17 +5,10 @@
 # Pedro Foletto Pimenta, setembro de 2019
 ###
 
-
 import sys
 import numpy as np
 from alpha_sequences import * # load data
 from blosum import *
-
-# returns the match score according to the BLOSUM62 matrix
-def get_blosum62_score(seq1, seq2):
-	blosum62 = Matrix(matrix_filename)
-	score = matrix.lookup_score(seq1, seq2)
-	return score
 
 # prints an alignment in an organized way
 def print_alignment(alignment1, alignment2):
@@ -31,7 +24,7 @@ def needleman_wunsch(seq1, seq2):
 	size2 = len(seq2) + 1
 
 	# load blosum62 matrix
-	blosum62 = Matrix("blosum62.txt")
+	blosum62 = Lookup_table("blosum62.txt")
 
 	# construct the grid
 	point_matrix = np.zeros((size1, size2))
@@ -42,15 +35,11 @@ def needleman_wunsch(seq1, seq2):
 			elif(j==0): 	# first column
 				point_matrix[i][j] = -i
 			else: 		# rest of the table
-#				if(seq1[i-1] == seq2[j-1]): # match
-#					match_score = 5
-#				else: # mismatch
-#					match_score = -3
 				match_score = int(blosum62.lookup_score(seq1[i-1], seq2[j-1])) # using blosum62
 
 				expr1 = point_matrix[i-1][j-1] + match_score
-				expr2 = point_matrix[i][j-1] -4 # -4 == +gap(seq1) ????? 
-				expr3 = point_matrix[i-1][j] -4 # -4 == +gap(seq2) ????? 
+				expr2 = point_matrix[i][j-1] -4 # -4 == +gap(seq1)
+				expr3 = point_matrix[i-1][j] -4 # -4 == +gap(seq2) 
 				point_matrix[i][j] = max(expr1, expr2, expr3)
 
 	# find the best alignment
