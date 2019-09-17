@@ -1,18 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# exercicio 1a da lista 2 de Biologia Computacional
+# exercicio 1a da lista 2 parte 1 de Biologia Computacional
 # Pedro Foletto Pimenta, setembro de 2019
 ###
 
 
-import sys
 import numpy as np
 from alpha_sequences import * # load data
 
 # prints an alignment in an organized way
 def print_alignment(alignment1, alignment2):
-	print("\nFinal alignment:")
+	print("Final alignment:")
 	print(alignment1)
 	print(alignment2)
 
@@ -37,8 +36,8 @@ def needleman_wunsch(seq1, seq2):
 				else: # mismatch
 					match_score = -3
 				expr1 = point_matrix[i-1][j-1] + match_score
-				expr2 = point_matrix[i][j-1] -4 # -4 == +gap(seq1) ????? 
-				expr3 = point_matrix[i-1][j] -4 # -4 == +gap(seq2) ????? 
+				expr2 = point_matrix[i][j-1] -4 # -4 == +gap(seq1)
+				expr3 = point_matrix[i-1][j] -4 # -4 == +gap(seq2) 
 				point_matrix[i][j] = max(expr1, expr2, expr3)
 
 	# find the best alignment
@@ -54,23 +53,22 @@ def needleman_wunsch(seq1, seq2):
 	# trace back to the upper left corner
 	while (i > 0 and j > 0):
 		up = point_matrix[i-1][j]
-		down = point_matrix[i][j-1]
+		left = point_matrix[i][j-1]
 		diag = point_matrix[i-1][j-1]
 		# find out best direction		
-		if(diag >= up and diag >= down):
+		if(diag >= up and diag >= left):
 			i = i - 1
 			j = j - 1
 			alignment1 = seq1[i] + alignment1
 			alignment2 = seq2[j] + alignment2
-		elif(up >= diag and up >= down):
+		elif(up >= diag and up >= left):
 			i = i - 1
 			alignment1 = seq1[i] + alignment1
 			alignment2 = "-" + alignment2
-		else: # (down >= diag and down >= up)
+		else: # (left >= diag and left >= up)
 			j = j - 1
 			alignment1 = "-" + alignment1
 			alignment2 = seq2[j] + alignment2
-		#print("Alignment score: " + str(alignment_score) + " + " + str(point_matrix[i][j])) # DEBUG
 		# count score
 		alignment_score = alignment_score + point_matrix[i][j]
 
@@ -103,7 +101,7 @@ def needleman_wunsch(seq1, seq2):
 	# print score
 	print("Alignment score: " + str(alignment_score))
 
-	return alignment1, alignment2, alignment_score
+	return alignment_score
 
 	
 
@@ -111,23 +109,17 @@ def needleman_wunsch(seq1, seq2):
 #################################
 # main
 
-# DEBUG
-seq_a = "GAATTCAGTTA"
-seq_b = "GGATCGA"
-# pego do wikipedia
-seq_w1 = "GCATGCU"
-seq_w2 = "GATTACA"
-
-_,_,_ = needleman_wunsch(seq_human, seq_horse) # DEBUG
-#needleman_wunsch(seq_a, seq_b) # DEBUG
-#needleman_wunsch(seq_w1, seq_w2) # DEBUG
-
 # qual das especies apresenta a maior semelhanca, em termos de sequencia, com a espécie humana (homo sapiens)
 best_score = 0
-for seq in seq_list[1:]:
-	_,_,score = needleman_wunsch(seq, seq_human)
-	if(score > best_score):
-		pass # TODO
+most_similar = ""
+for seq_name in seq_dict.keys(): # iterate through all sequences
+	if(seq_name != "human"): # do not align human with human
+		print("\nAligning the human sequence with " + seq_name + " sequence...")
+		seq = seq_dict[seq_name]
+		score = needleman_wunsch(seq, seq_human) # align
+		if(score > best_score):
+			best_score = score
+			most_similar = seq_name
 
-print(seq_dict)
+print("\n\nThe species that is most similar to humans (in sequence terms) is " + str(most_similar) + " (alignment score: "+str(best_score) + ")")
 		
