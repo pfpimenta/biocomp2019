@@ -1,5 +1,9 @@
 # biocomp2019
-Repositorio para os codigos da cadeira BIologia Computacional cursada no segundo semestre de 2019 ministrada pelo professor Marcio Dorn na Universidade Federal do Rio Grande do Sul (UFRGS).
+Repositorio para os codigos da cadeira Biologia Computacional cursada no segundo semestre de 2019 ministrada pelo professor Marcio Dorn na Universidade Federal do Rio Grande do Sul (UFRGS).
+
+## Dependencias
+- Python (acho que tanto faz se é 2 ou 3)
+- Numpy
 
 ### Lista 1
 Manipulacao de strings representando sequencias de cromossomos.
