@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# exercicio 2 da lista 2 parte 1 de Biologia Computacional
+# exercicio 2 da lista 2 parte 2 de Biologia Computacional
 # Pedro Foletto Pimenta, setembro de 2019
 ###
 

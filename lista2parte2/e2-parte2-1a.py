@@ -63,10 +63,6 @@ def smith_waterman(seq1, seq2):
 				expr3 = point_matrix[i-1][j] + GAP_SCORE # -4 == +gap(seq2) 
 				point_matrix[i][j] = max(0, expr1, expr2, expr3)
 
-	# DEBUG ###
-	print(np.sum(point_matrix))
-	###
-
 	# find the best alignment
 	alignment1 = ""
 	alignment2 = ""
@@ -76,7 +72,7 @@ def smith_waterman(seq1, seq2):
 	# start at the bottom right
 	i, j = index_highest_value(point_matrix)
 	end_i, end_j = i, j
-	alignment_score = point_matrix[i][j] # init total score
+	alignment_score = point_matrix[i][j] # inicializar total score
 
 	# traceback starting at the element with the highest score until 0 is encountered
 	while (point_matrix[i][j] != 0):
@@ -119,8 +115,8 @@ def smith_waterman(seq1, seq2):
 	print(alignment1 + " (indices de " + str(begin_i) + " ate " + str(end_i) + ")")
 	print(alignment2 + " (indices de " + str(begin_j) + " ate " + str(end_j) + ")")
 
-	# print "identidade do alinhamento" ?
-	print("Identidade (?): " + str(match_count))
+	# print "identidade do alinhamento" (?)
+	print("Identidade: " + str(match_count))
 	
 	# print score
 	print("Alignment score: " + str(alignment_score))
