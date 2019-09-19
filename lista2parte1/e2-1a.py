@@ -5,9 +5,14 @@
 # Pedro Foletto Pimenta, setembro de 2019
 ###
 
-
 import numpy as np
 from alpha_sequences import * # load data
+
+
+# "regras" do alinhamento
+GAP_SCORE = -4
+MATCH_SCORE = 5
+MISMATCH_SCORE = -3
 
 # prints an alignment in an organized way
 def print_alignment(alignment1, alignment2):
@@ -27,17 +32,17 @@ def needleman_wunsch(seq1, seq2):
 	for i in range(size1):
 		for j in range(size2):
 			if(i==0): 	# first row
-				point_matrix[i][j] = -j
+				point_matrix[i][j] = j * GAP_SCORE
 			elif(j==0): 	# first column
-				point_matrix[i][j] = -i
+				point_matrix[i][j] = i * GAP_SCORE
 			else: 		# rest of the table
 				if(seq1[i-1] == seq2[j-1]): # match
-					match_score = 5
+					match_score = MATCH_SCORE
 				else: # mismatch
-					match_score = -3
+					match_score = MISMATCH_SCORE
 				expr1 = point_matrix[i-1][j-1] + match_score
-				expr2 = point_matrix[i][j-1] -4 # -4 == +gap(seq1)
-				expr3 = point_matrix[i-1][j] -4 # -4 == +gap(seq2) 
+				expr2 = point_matrix[i][j-1] + GAP_SCORE # -4 == +gap(seq1)
+				expr3 = point_matrix[i-1][j] + GAP_SCORE # -4 == +gap(seq2) 
 				point_matrix[i][j] = max(expr1, expr2, expr3)
 
 	# find the best alignment
