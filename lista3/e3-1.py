@@ -8,6 +8,52 @@
 
 import sys
 
+# ultrametric tree class
+class U_Tree:
+
+	# initialization
+	def __init__(self):
+        	self.left = None
+        	self.right = None
+        	self.left_dist = None
+        	self.right_dist = None
+        	self.name = None  # ??? n sei se precisa
+
+	# verify if tree is ultrametric
+	def verify_ultrametric(self)
+		pass # TODO
+		
+		# sub trees must also be ultrametric
+		if(isinstance(self.left, U_Tree)):
+			if(not self.left.verify_ultrametric())
+				return False
+		# sub trees must also be ultrametric
+		if(isinstance(self.right, U_Tree)):
+			if(not self.right.verify_ultrametric())
+				return False
+		
+		return True
+
+	# distance from this point to the leaves
+	def get_leaves_dist(self): # TODO ???
+
+		# if it is ultrametric, it does not matter if we check left or right
+		if(isinstance(self.left, U_Tree)):
+			return self.left_dist + self.left.get_leaves_dist()
+		else:
+			return self.left_dist
+
+
+
+# Agglomerative methods for ultrametric trees (UPGMA)
+def upgma(dist_matrix, tree):
+
+	# se a matriz soh tem um elemento, acabou
+	if(len(dist_matrix)==1):
+		return tree
+
+	# TODO
+
 
 # objetivos:
 # - construcao de arvores filogeneticas
@@ -48,4 +94,9 @@ dist_matrix[('gib', 'hum')] = 0.205
 dist_matrix[('gib', 'chi')] = 0.214
 dist_matrix[('gib', 'gib')] = 0.0
 
+# criar arvore vazia
+
 # TODO: metodo UPGMA, e dai usar ele pra construir a arvore
+
+# find smallest distance
+
