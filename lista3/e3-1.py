@@ -56,20 +56,20 @@ class U_Tree:
 	
 	# printing function ( CALL THIS )
 	def print_tree(self): 
-		#print(self.name)
-		self.print_subtree(self.left, 1)
-		self.print_subtree(self.right, 1)
+		self.print_subtree(self.left, 1, self.left_dist)
+		self.print_subtree(self.right, 1, self.right_dist)
 
 	# auxiliary printing function
-	def print_subtree(self, subtree, level):
+	def print_subtree(self, subtree, level, dist):
 	# talvez seja melhor refazer essa funcao
 		if(isinstance(subtree, U_Tree)):
 			#print(level*'-' + subtree.name)
-			self.print_subtree(subtree.left, level+1)
-			self.print_subtree(subtree.right, level+1)
+			self.print_subtree(subtree.left, level+1, subtree.left_dist)
+			print(level*'   '+'-' + str(dist) + '-')
+			self.print_subtree(subtree.right, level+1, subtree.right_dist)
 		elif(isinstance(subtree, str)):
-			print(level*'----' + subtree)
-			#print(level*'--'+ '-'+str(dist)+ level*'--' + subtree) #versao melhorada, mas tem q conseguir a dist
+			#print(level*'----' + subtree)
+			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree) #versao melhorada, mas tem q conseguir a dist
 
 
 # Agglomerative methods for ultrametric trees (UPGMA)
@@ -130,7 +130,7 @@ test_tree.right_dist = 1
 test_tree.right.right = "oloko"
 test_tree.right.right_dist = 4
 test_tree.right.left = "bixo"
-test_tree.right.left_dist = 5
+test_tree.right.left_dist = 4
 
 # DEBUG print
 test_tree.print_tree()
