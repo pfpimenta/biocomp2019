@@ -20,18 +20,24 @@ class U_Tree:
         	self.name = None  # ??? n sei se precisa
 
 	# verify if tree is ultrametric
-	def verify_ultrametric(self)
+	def verify_ultrametric(self):
 		pass # TODO
 		
 		# sub trees must also be ultrametric
 		if(isinstance(self.left, U_Tree)):
-			if(not self.left.verify_ultrametric())
+			if(not self.left.verify_ultrametric()):
 				return False
 		# sub trees must also be ultrametric
 		if(isinstance(self.right, U_Tree)):
-			if(not self.right.verify_ultrametric())
+			if(not self.right.verify_ultrametric()):
 				return False
-		
+
+		# left distance to the leaves == right distance to the leaves
+		left_dist_leaves = self.left_dist + self.left.get_leaves_dist()
+		right_dist_leaves = self.right_dist + self.right.get_leaves_dist()
+		if(right_dist_leaves != right_dist_leaves):
+			return False
+
 		return True
 
 	# distance from this point to the leaves
@@ -42,7 +48,19 @@ class U_Tree:
 			return self.left_dist + self.left.get_leaves_dist()
 		else:
 			return self.left_dist
+	
+	# printing function ( CALL THIS )
+	def print_tree(self): 
+		print(self.name)
+		self.print_subtree(self.left, 1)
+		self.print_subtree(self.right, 1)
 
+	# auxiliary printing function
+	def print_subtree(self, subtree, level):
+		if(subtree != None):
+			print(level*'-' + subtree.name)
+			self.print_subtree(subtree.left, level+1)
+			self.print_subtree(subtree.right, level+1)
 
 
 # Agglomerative methods for ultrametric trees (UPGMA)
@@ -54,7 +72,7 @@ def upgma(dist_matrix, tree):
 
 	# TODO
 
-
+	
 # objetivos:
 # - construcao de arvores filogeneticas
 # - implementacao do metodo Agglomerative methods for ultrametric trees (UPGMA)
@@ -93,6 +111,16 @@ dist_matrix[('gib', 'ora')] = 0.211
 dist_matrix[('gib', 'hum')] = 0.205
 dist_matrix[('gib', 'chi')] = 0.214
 dist_matrix[('gib', 'gib')] = 0.0
+
+# DEBUG : test tree
+test_tree = U_Tree()
+test_tree.name = 'cacac'
+test_tree.left = U_Tree()
+test_tree.left.name = 'ceecee'
+test_tree.right = U_Tree()
+test_tree.right.name = 'csafasfe'
+test_tree.print_tree()
+
 
 # criar arvore vazia
 
