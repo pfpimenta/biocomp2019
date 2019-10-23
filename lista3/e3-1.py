@@ -61,15 +61,12 @@ class U_Tree:
 
 	# auxiliary printing function
 	def print_subtree(self, subtree, level, dist):
-	# talvez seja melhor refazer essa funcao
 		if(isinstance(subtree, U_Tree)):
-			#print(level*'-' + subtree.name)
 			self.print_subtree(subtree.left, level+1, subtree.left_dist)
 			print(level*'   '+'-' + str(dist) + '-')
 			self.print_subtree(subtree.right, level+1, subtree.right_dist)
 		elif(isinstance(subtree, str)):
-			#print(level*'----' + subtree)
-			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree) #versao melhorada, mas tem q conseguir a dist
+			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree)
 
 
 # Agglomerative methods for ultrametric trees (UPGMA)
