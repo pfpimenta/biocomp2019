@@ -17,31 +17,36 @@ class U_Tree:
         	self.right = None
         	self.left_dist = None
         	self.right_dist = None
-        	self.name = None  # ??? n sei se precisa
 
 	# verify if tree is ultrametric
-	def verify_ultrametric(self):
-		pass # TODO
+	def is_ultrametric(self):
+		# returns True if self is ultrametric
+		# returns False if self is not ultrametric
 		
 		# sub trees must also be ultrametric
 		if(isinstance(self.left, U_Tree)):
-			if(not self.left.verify_ultrametric()):
+			if(not self.left.is_ultrametric()):
 				return False
+			left_dist_leaves = self.left_dist + self.left.get_leaves_dist()
+		else:
+			left_dist_leaves = self.left_dist
+
 		# sub trees must also be ultrametric
 		if(isinstance(self.right, U_Tree)):
-			if(not self.right.verify_ultrametric()):
+			if(not self.right.is_ultrametric()):
 				return False
+			right_dist_leaves = self.right_dist + self.right.get_leaves_dist()
+		else:
+			right_dist_leaves = self.right_dist
 
 		# left distance to the leaves == right distance to the leaves
-		left_dist_leaves = self.left_dist + self.left.get_leaves_dist()
-		right_dist_leaves = self.right_dist + self.right.get_leaves_dist()
-		if(right_dist_leaves != right_dist_leaves):
+		if(left_dist_leaves != right_dist_leaves):
 			return False
 
 		return True
 
 	# distance from this point to the leaves
-	def get_leaves_dist(self): # TODO ???
+	def get_leaves_dist(self):
 
 		# if it is ultrametric, it does not matter if we check left or right
 		if(isinstance(self.left, U_Tree)):
@@ -51,16 +56,20 @@ class U_Tree:
 	
 	# printing function ( CALL THIS )
 	def print_tree(self): 
-		print(self.name)
+		#print(self.name)
 		self.print_subtree(self.left, 1)
 		self.print_subtree(self.right, 1)
 
 	# auxiliary printing function
 	def print_subtree(self, subtree, level):
-		if(subtree != None):
-			print(level*'-' + subtree.name)
+	# talvez seja melhor refazer essa funcao
+		if(isinstance(subtree, U_Tree)):
+			#print(level*'-' + subtree.name)
 			self.print_subtree(subtree.left, level+1)
 			self.print_subtree(subtree.right, level+1)
+		elif(isinstance(subtree, str)):
+			print(level*'----' + subtree)
+			#print(level*'--'+ '-'+str(dist)+ level*'--' + subtree) #versao melhorada, mas tem q conseguir a dist
 
 
 # Agglomerative methods for ultrametric trees (UPGMA)
@@ -114,12 +123,26 @@ dist_matrix[('gib', 'gib')] = 0.0
 
 # DEBUG : test tree
 test_tree = U_Tree()
-test_tree.name = 'cacac'
-test_tree.left = U_Tree()
-test_tree.left.name = 'ceecee'
+test_tree.left = "folhaLOKA"
+test_tree.left_dist = 5
 test_tree.right = U_Tree()
-test_tree.right.name = 'csafasfe'
+test_tree.right_dist = 1
+test_tree.right.right = "oloko"
+test_tree.right.right_dist = 4
+test_tree.right.left = "bixo"
+test_tree.right.left_dist = 5
+
+# DEBUG print
 test_tree.print_tree()
+
+# DEBUG distance to the leaves
+leaves_dist = test_tree.get_leaves_dist()
+print("leaves dist : " + str(leaves_dist))
+
+if(test_tree.is_ultrametric()):
+	print("tree is ultrametric")
+else:
+	print("tree is not ultrametric")
 
 
 # criar arvore vazia
