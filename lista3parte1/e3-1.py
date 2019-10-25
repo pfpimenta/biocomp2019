@@ -151,5 +151,8 @@ tree = U_Tree()
 # TODO: metodo UPGMA, e dai usar ele pra construir a arvore
 tree = upgma(dist_matrix, tree)
 
+# printar resultados
+print("printing resulting tree:")
+tree.print_tree()
 
 
