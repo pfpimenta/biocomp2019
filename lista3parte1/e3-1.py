@@ -69,17 +69,58 @@ class U_Tree:
 			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree)
 
 
-# Agglomerative methods for ultrametric trees (UPGMA)
+# find smallest distance in the distance matrix
+def get_smallest_dist(dist_matrix):
+	pass # TODO
+	# se nao tiver os 0s na matriz, nao vou precisar dessa funcao
+
+def merge_matrix_nodes(dist_matrix, node_a, node_b):
+
+	# generate list with all nodes
+	node_list = []
+	for key in dist_matrix:
+		if(key[0] not in node_list):
+			node_list.append(key[0])
+		if(key[1] not in node_list):
+			node_list.append(key[1])
+
+	print(node_list) # DEBUG
+
+	# construct new matrix
+	new_dist_matrix = {}
+	for node in node_list:
+		if node != node_a and node != node_b:
+			new_key_a = ((node_a,node_b), node)
+			new_key_b = (node, (node_a,node_b)) # precisa mesmo?
+			print(new_key_a)
+			print(new_key_b)
+			# // botar essas new key + combinacoes entre nodos sem merge que tao no dist_matrix ainda
+			#new_dist_matrix[()]
+
+	return new_dist_matrix # TODO # DEBUG
+
+# agglomerative method for ultrametric trees (UPGMA)
 def upgma(dist_matrix, tree):
 
 	# se a matriz soh tem um elemento, acabou
 	if(len(dist_matrix)==1):
 		return tree
 
-	# find smallest distance
-	
-	# TODO
+	# find smallest distance for clustering
+	node_a, node_b = min(dist_matrix, key=dist_matrix.get)
 
+	# branch length estimation
+	branch_lenght = dist_matrix[(node_a, node_b)]/2
+	tree.right = node_a
+	tree.right_dist = branch_lenght
+	tree.left = node_b
+	tree.left_dist = branch_lenght
+
+	# new updated distance matrix
+	new_dist_matrix = merge_matrix_nodes(dist_matrix, node_a, node_b)
+
+	#return upgma(new_dist_matrix, tree)
+	return tree
 	
 # objetivos:
 # - construcao de arvores filogeneticas
@@ -90,35 +131,35 @@ def upgma(dist_matrix, tree):
 
 dist_matrix = {}
 
-dist_matrix[('gor', 'gor')] = 0.0
+#dist_matrix[('gor', 'gor')] = 0.0
 dist_matrix[('gor', 'ora')] = 0.189
 dist_matrix[('gor', 'hum')] = 0.11
 dist_matrix[('gor', 'chi')] = 0.113
 dist_matrix[('gor', 'gib')] = 0.215
 
 dist_matrix[('ora', 'gor')] = 0.189
-dist_matrix[('ora', 'ora')] = 0.0
+#dist_matrix[('ora', 'ora')] = 0.0
 dist_matrix[('ora', 'hum')] = 0.179
 dist_matrix[('ora', 'chi')] = 0.192
 dist_matrix[('ora', 'gib')] = 0.211
 
 dist_matrix[('hum', 'gor')] = 0.11
 dist_matrix[('hum', 'ora')] = 0.179
-dist_matrix[('hum', 'hum')] = 0.0
+#dist_matrix[('hum', 'hum')] = 0.0
 dist_matrix[('hum', 'chi')] = 0.09405
 dist_matrix[('hum', 'gib')] = 0.205
 
 dist_matrix[('chi', 'gor')] = 0.113
 dist_matrix[('chi', 'ora')] = 0.192
 dist_matrix[('chi', 'hum')] = 0.09405
-dist_matrix[('chi', 'chi')] = 0.0
+#dist_matrix[('chi', 'chi')] = 0.0
 dist_matrix[('chi', 'gib')] = 0.214
 
 dist_matrix[('gib', 'gor')] = 0.215
 dist_matrix[('gib', 'ora')] = 0.211
 dist_matrix[('gib', 'hum')] = 0.205
 dist_matrix[('gib', 'chi')] = 0.214
-dist_matrix[('gib', 'gib')] = 0.0
+#dist_matrix[('gib', 'gib')] = 0.0
 
 # DEBUG : test tree
 test_tree = U_Tree()
@@ -154,5 +195,4 @@ tree = upgma(dist_matrix, tree)
 # printar resultados
 print("printing resulting tree:")
 tree.print_tree()
-
 
