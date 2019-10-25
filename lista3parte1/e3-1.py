@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# exercicio a da lista 3 de Biologia Computacional
+# exercicio a da lista 3 parte 2 de Biologia Computacional
 # Pedro Foletto Pimenta, outubro de 2019
 ###
 
@@ -76,6 +76,8 @@ def upgma(dist_matrix, tree):
 	if(len(dist_matrix)==1):
 		return tree
 
+	# find smallest distance
+	
 	# TODO
 
 	
@@ -130,6 +132,7 @@ test_tree.right.left = "bixo"
 test_tree.right.left_dist = 4
 
 # DEBUG print
+print("printing test tree:")
 test_tree.print_tree()
 
 # DEBUG distance to the leaves
@@ -143,8 +146,10 @@ else:
 
 
 # criar arvore vazia
+tree = U_Tree()
 
 # TODO: metodo UPGMA, e dai usar ele pra construir a arvore
+tree = upgma(dist_matrix, tree)
 
-# find smallest distance
+
 
