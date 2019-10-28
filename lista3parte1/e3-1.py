@@ -62,11 +62,13 @@ class U_Tree:
 	# auxiliary printing function
 	def print_subtree(self, subtree, level, dist):
 		if(isinstance(subtree, U_Tree)):
+			print(level*'   '  + '-')#
 			self.print_subtree(subtree.left, level+1, subtree.left_dist)
-			print(level*'   '+'-' + str(dist) + '-')
+			print(level*'   ' + level*'-' + str(dist) + level*'-')
 			self.print_subtree(subtree.right, level+1, subtree.right_dist)
+			print(level*'   '  + '-')#
 		elif(isinstance(subtree, str)):
-			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree)
+			print(2*level*'   ' + level*'-.-'+ '-'+str(dist)+ level*'-.-' +'\t'+ subtree)
 
 
 # TODO terminar :
@@ -104,9 +106,11 @@ def upgma(otu_list, dist_matrix):
 	# otus : lista das OTUs no passo atual
 	# dist_matrix : dicionario com as distancias entre as OTUs
 	
-	tree_clusters2 = []
+	# initialize tree
 	tree_clusters = {}
-
+	for otu in otu_list:
+		tree_clusters[otu] = otu
+	
 	# enquanto a arvore nao tiver completa
 	while(len(otu_list)>1):
 
@@ -129,21 +133,15 @@ def upgma(otu_list, dist_matrix):
 
 		# update tree : new tree node
 		new_tree_node = U_Tree()
-		new_tree_node.right = otu_a # TODO
-		new_tree_node.right_dist = branch_lenght
-		new_tree_node.left = otu_b # TODO
-		new_tree_node.left_dist = branch_lenght
+		new_tree_node.right = tree_clusters[otu_a]
+		new_tree_node.right_dist = branch_lenght # TODO
+		new_tree_node.left = tree_clusters[otu_b]
+		new_tree_node.left_dist = branch_lenght # TODO
 
 		tree_clusters[new_otu] = new_tree_node 
-		tree_clusters2.append(new_tree_node) 
-
+	
 		# DEBUG
 		print("DEBUG otu list: " + str(otu_list))
-
-	# DEBUG
-	for tree in tree_clusters2:
-		print("DEBUG tree")
-		tree.print_tree()
 
 	return tree_clusters[otu_list[0]]	
 	
