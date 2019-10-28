@@ -74,7 +74,7 @@ class U_Tree:
 
 # TODO terminar :
 # returns dist_matrix with otu_a and otu_b fused into a new otu
-def merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b):
+def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
 
 	# add new otu
 	new_otu = otu_a + '-' + otu_b
@@ -99,7 +99,7 @@ def merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b):
 			key = (otu_b, otu)
 			dist_matrix.pop(key, None)
 
-	return dist_matrix, tree_clusters
+	return dist_matrix
 
 
 # agglomerative method for ultrametric trees (UPGMA)
@@ -125,11 +125,11 @@ def upgma(dist_matrix):
 		# find smallest distance for clustering
 		otu_a, otu_b = min(dist_matrix, key=dist_matrix.get)
 
-		# estimate branch_lenght
+		# branch lenght estimation
 		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
 		# update distance matrix
-		dist_matrix, tree_clusters = merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b)
+		dist_matrix = merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b)
 		
 		# update OTU list
 		new_otu = otu_a + '-' + otu_b
