@@ -103,9 +103,16 @@ def merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b):
 
 
 # agglomerative method for ultrametric trees (UPGMA)
-def upgma(otu_list, dist_matrix):
-	# otus : lista das OTUs no passo atual
+def upgma(dist_matrix):
 	# dist_matrix : dicionario com as distancias entre as OTUs
+
+	# inicializacao da lista de OTUs
+	otu_list = []
+	for key in dist_matrix:
+		if(key[0] not in otu_list):
+			otu_list.append(key[0])
+		if(key[1] not in otu_list):
+			otu_list.append(key[1])
 	
 	# initialize tree
 	tree_clusters = {}
@@ -118,6 +125,7 @@ def upgma(otu_list, dist_matrix):
 		# find smallest distance for clustering
 		otu_a, otu_b = min(dist_matrix, key=dist_matrix.get)
 
+		# estimate branch_lenght
 		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
 		# update distance matrix
@@ -216,16 +224,9 @@ dist_matrix[('gib', 'chi')] = 0.214
 # 	print("tree is not ultrametric")
 # ##############
 
-# inicializacao da lista de OTUs
-otu_list = []
-for key in dist_matrix:
-		if(key[0] not in otu_list):
-			otu_list.append(key[0])
-		if(key[1] not in otu_list):
-			otu_list.append(key[1])
 
-# TODO: metodo UPGMA, e dai usar ele pra construir a arvore
-tree = upgma(otu_list, dist_matrix)
+# construcao de uma arvore ultrametrica filogenetica a partir da matriz de distancias usando UPGMA
+tree = upgma(dist_matrix)
 
 # printar resultados
 print("printing resulting tree:")
