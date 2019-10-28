@@ -74,6 +74,7 @@ def get_smallest_dist(dist_matrix):
 	pass # TODO
 	# se nao tiver os 0s na matriz, nao vou precisar dessa funcao
 
+# TODO terminar :
 # returns dist_matrix with otu_a and otu_b fused into a new otu
 def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
 
@@ -91,26 +92,24 @@ def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
 			dist_matrix.pop(key, None)
 
 	# add new otu
+	new_otu = otu_a + '-' + otu_b
 	for otu in otu_list:
 		if otu != otu_a and otu != otu_b:
-			new_otu = otu_a + '-' + otu_b
-			# new_key_a = ((otu_a,otu_b), otu)
-			# new_key_b = (otu, (otu_a,otu_b)) # precisa mesmo?
-			new_key_a = (new_otu, otu)
-			new_key_b = (otu, new_otu) # precisa mesmo?
-			print(new_key_a)
-			print(new_key_b)
-			dist_matrix[new_key_a] = 1 # TODO
-			dist_matrix[new_key_b] = 1 # TODO
+			new_dist = 1  # TODO
+			new_key = (new_otu, otu)
+			dist_matrix[new_key] = new_dist
+			new_key = (otu, new_otu)
+			dist_matrix[new_key] = new_dist
 
 	return dist_matrix
 
 
 # agglomerative method for ultrametric trees (UPGMA)
 def upgma(otu_list, dist_matrix):
-	# 	# otus : lista das OTUs no passo atual
-	# 	# dist_matrix : dicionario com as distancias entre as OTUs
-	# 	# tree : arvore montada no 
+	# otus : lista das OTUs no passo atual
+	# dist_matrix : dicionario com as distancias entre as OTUs
+	
+	tree_clusters = {}
 
 	# enquanto a arvore nao tiver completa
 	while(len(otu_list)>1):
@@ -122,9 +121,9 @@ def upgma(otu_list, dist_matrix):
 		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
 		# update distance matrix
-		print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
+		#print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
 		dist_matrix = merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b)
-		print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
+		#print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
 		
 		# update OTU list
 		new_otu = otu_a + '-' + otu_b
