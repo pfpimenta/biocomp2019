@@ -74,52 +74,74 @@ def get_smallest_dist(dist_matrix):
 	pass # TODO
 	# se nao tiver os 0s na matriz, nao vou precisar dessa funcao
 
-def merge_matrix_nodes(dist_matrix, node_a, node_b):
+# returns dist_matrix with otu_a and otu_b fused into a new otu
+def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
 
-	# generate list with all nodes
-	node_list = []
-	for key in dist_matrix:
-		if(key[0] not in node_list):
-			node_list.append(key[0])
-		if(key[1] not in node_list):
-			node_list.append(key[1])
+	# remove otu_a and otu_b
+	for otu in otu_list:
+		if otu != otu_a:
+			key = (otu, otu_a)
+			dist_matrix.pop(key, None)
+			key = (otu_a, otu)
+			dist_matrix.pop(key, None)
+		if otu != otu_b:
+			key = (otu, otu_b)
+			dist_matrix.pop(key, None)
+			key = (otu_b, otu)
+			dist_matrix.pop(key, None)
 
-	print(node_list) # DEBUG
-
-	# construct new matrix
-	new_dist_matrix = {}
-	for node in node_list:
-		if node != node_a and node != node_b:
-			new_key_a = ((node_a,node_b), node)
-			new_key_b = (node, (node_a,node_b)) # precisa mesmo?
+	# add new otu
+	for otu in otu_list:
+		if otu != otu_a and otu != otu_b:
+			new_otu = otu_a + '-' + otu_b
+			# new_key_a = ((otu_a,otu_b), otu)
+			# new_key_b = (otu, (otu_a,otu_b)) # precisa mesmo?
+			new_key_a = (new_otu, otu)
+			new_key_b = (otu, new_otu) # precisa mesmo?
 			print(new_key_a)
 			print(new_key_b)
-			# // botar essas new key + combinacoes entre nodos sem merge que tao no dist_matrix ainda
-			#new_dist_matrix[()]
+			dist_matrix[new_key_a] = 1 # TODO
+			dist_matrix[new_key_b] = 1 # TODO
 
-	return new_dist_matrix # TODO # DEBUG
+	return dist_matrix
+
 
 # agglomerative method for ultrametric trees (UPGMA)
-def upgma(dist_matrix, tree):
+def upgma(otu_list, dist_matrix):
+	# 	# otus : lista das OTUs no passo atual
+	# 	# dist_matrix : dicionario com as distancias entre as OTUs
+	# 	# tree : arvore montada no 
 
-	# se a matriz soh tem um elemento, acabou
-	if(len(dist_matrix)==1):
-		return tree
+	# enquanto a arvore nao tiver completa
+	while(len(otu_list)>1):
 
-	# find smallest distance for clustering
-	node_a, node_b = min(dist_matrix, key=dist_matrix.get)
+		# find smallest distance for clustering
+		otu_a, otu_b = min(dist_matrix, key=dist_matrix.get)
 
-	# branch length estimation
-	branch_lenght = dist_matrix[(node_a, node_b)]/2
-	tree.right = node_a
-	tree.right_dist = branch_lenght
-	tree.left = node_b
-	tree.left_dist = branch_lenght
+		# branch length estimation
+		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
-	# new updated distance matrix
-	new_dist_matrix = merge_matrix_nodes(dist_matrix, node_a, node_b)
+		# update distance matrix
+		print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
+		dist_matrix = merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b)
+		print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
+		
+		# update OTU list
+		new_otu = otu_a + '-' + otu_b
+		otu_list.append(new_otu)
+		otu_list.remove(otu_a)
+		otu_list.remove(otu_b)
 
-	#return upgma(new_dist_matrix, tree)
+		# update tree
+		tree = U_Tree()
+		tree.right = otu_a
+		tree.right_dist = branch_lenght
+		tree.left = otu_b
+		tree.left_dist = branch_lenght
+
+		# DEBUG
+		print("DEBUG otu list: " + str(otu_list))
+
 	return tree
 	
 # objetivos:
@@ -186,11 +208,16 @@ else:
 	print("tree is not ultrametric")
 
 
-# criar arvore vazia
-tree = U_Tree()
+# inicializacao da lista de OTUs
+otu_list = []
+for key in dist_matrix:
+		if(key[0] not in otu_list):
+			otu_list.append(key[0])
+		if(key[1] not in otu_list):
+			otu_list.append(key[1])
 
 # TODO: metodo UPGMA, e dai usar ele pra construir a arvore
-tree = upgma(dist_matrix, tree)
+tree = upgma(otu_list, dist_matrix)
 
 # printar resultados
 print("printing resulting tree:")
