@@ -57,6 +57,7 @@ class U_Tree:
 	# printing function ( CALL THIS )
 	def print_tree(self): 
 		self.print_subtree(self.left, 1, self.left_dist)
+
 		self.print_subtree(self.right, 1, self.right_dist)
 
 	# auxiliary printing function
@@ -68,7 +69,7 @@ class U_Tree:
 			self.print_subtree(subtree.right, level+1, subtree.right_dist)
 			print(level*'   '  + '-')#
 		elif(isinstance(subtree, str)):
-			print(2*level*'   ' + level*'-.-'+ '-'+str(dist)+ level*'-.-' +'\t'+ subtree)
+			print(2*level*'   ' + level*' - '+str(dist)+ level*' - ' +'\t'+ subtree)
 
 
 # TODO terminar :
@@ -117,13 +118,12 @@ def upgma(otu_list, dist_matrix):
 		# find smallest distance for clustering
 		otu_a, otu_b = min(dist_matrix, key=dist_matrix.get)
 
-		# branch length estimation
 		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
 		# update distance matrix
-		#print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
+		print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
 		dist_matrix, tree_clusters = merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b)
-		#print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
+		print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
 		
 		# update OTU list
 		new_otu = otu_a + '-' + otu_b
@@ -134,10 +134,20 @@ def upgma(otu_list, dist_matrix):
 		# update tree : new tree node
 		new_tree_node = U_Tree()
 		new_tree_node.right = tree_clusters[otu_a]
-		new_tree_node.right_dist = branch_lenght # TODO
+		if(isinstance(new_tree_node.right, U_Tree)):
+			new_tree_node.right_dist = branch_lenght - new_tree_node.right.get_leaves_dist() # TODO
+		else: # nodo folha
+			new_tree_node.right_dist = branch_lenght# TODO
 		new_tree_node.left = tree_clusters[otu_b]
 		new_tree_node.left_dist = branch_lenght # TODO
-
+		if(isinstance(new_tree_node.left, U_Tree)):
+			new_tree_node.left_dist = branch_lenght - new_tree_node.left.get_leaves_dist() # TODO
+		else: # nodo folha
+			new_tree_node.left_dist = branch_lenght# TODO
+		
+		# update tree clusters
+		tree_clusters.pop(otu_a)
+		tree_clusters.pop(otu_b)
 		tree_clusters[new_otu] = new_tree_node 
 	
 		# DEBUG
