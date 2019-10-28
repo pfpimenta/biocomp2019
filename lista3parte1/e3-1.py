@@ -121,9 +121,7 @@ def upgma(otu_list, dist_matrix):
 		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
 		# update distance matrix
-		print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
 		dist_matrix, tree_clusters = merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b)
-		print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
 		
 		# update OTU list
 		new_otu = otu_a + '-' + otu_b
@@ -135,15 +133,15 @@ def upgma(otu_list, dist_matrix):
 		new_tree_node = U_Tree()
 		new_tree_node.right = tree_clusters[otu_a]
 		if(isinstance(new_tree_node.right, U_Tree)):
-			new_tree_node.right_dist = branch_lenght - new_tree_node.right.get_leaves_dist() # TODO
+			new_tree_node.right_dist = branch_lenght - new_tree_node.right.get_leaves_dist()
 		else: # nodo folha
-			new_tree_node.right_dist = branch_lenght# TODO
+			new_tree_node.right_dist = branch_lenght
 		new_tree_node.left = tree_clusters[otu_b]
-		new_tree_node.left_dist = branch_lenght # TODO
+		new_tree_node.left_dist = branch_lenght
 		if(isinstance(new_tree_node.left, U_Tree)):
-			new_tree_node.left_dist = branch_lenght - new_tree_node.left.get_leaves_dist() # TODO
+			new_tree_node.left_dist = branch_lenght - new_tree_node.left.get_leaves_dist()
 		else: # nodo folha
-			new_tree_node.left_dist = branch_lenght# TODO
+			new_tree_node.left_dist = branch_lenght
 		
 		# update tree clusters
 		tree_clusters.pop(otu_a)
@@ -151,7 +149,7 @@ def upgma(otu_list, dist_matrix):
 		tree_clusters[new_otu] = new_tree_node 
 	
 		# DEBUG
-		print("DEBUG otu list: " + str(otu_list))
+		#print("DEBUG otu list: " + str(otu_list))
 
 	return tree_clusters[otu_list[0]]	
 	
