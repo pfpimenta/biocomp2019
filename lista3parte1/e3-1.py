@@ -69,14 +69,19 @@ class U_Tree:
 			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree)
 
 
-# find smallest distance in the distance matrix
-def get_smallest_dist(dist_matrix):
-	pass # TODO
-	# se nao tiver os 0s na matriz, nao vou precisar dessa funcao
-
 # TODO terminar :
 # returns dist_matrix with otu_a and otu_b fused into a new otu
-def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
+def merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b):
+
+	# add new otu
+	new_otu = otu_a + '-' + otu_b
+	for otu in otu_list:
+		if otu != otu_a and otu != otu_b:
+			new_dist = (dist_matrix[(otu, otu_a)] + dist_matrix[(otu, otu_b)])/2
+			new_key = (new_otu, otu)
+			dist_matrix[new_key] = new_dist
+			new_key = (otu, new_otu)
+			dist_matrix[new_key] = new_dist
 
 	# remove otu_a and otu_b
 	for otu in otu_list:
@@ -91,17 +96,7 @@ def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
 			key = (otu_b, otu)
 			dist_matrix.pop(key, None)
 
-	# add new otu
-	new_otu = otu_a + '-' + otu_b
-	for otu in otu_list:
-		if otu != otu_a and otu != otu_b:
-			new_dist = 1  # TODO
-			new_key = (new_otu, otu)
-			dist_matrix[new_key] = new_dist
-			new_key = (otu, new_otu)
-			dist_matrix[new_key] = new_dist
-
-	return dist_matrix
+	return dist_matrix, tree_clusters
 
 
 # agglomerative method for ultrametric trees (UPGMA)
@@ -109,6 +104,7 @@ def upgma(otu_list, dist_matrix):
 	# otus : lista das OTUs no passo atual
 	# dist_matrix : dicionario com as distancias entre as OTUs
 	
+	tree_clusters2 = []
 	tree_clusters = {}
 
 	# enquanto a arvore nao tiver completa
@@ -122,7 +118,7 @@ def upgma(otu_list, dist_matrix):
 
 		# update distance matrix
 		#print("DEBUG 1 : " + str(dist_matrix)) # DEBUG
-		dist_matrix = merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b)
+		dist_matrix, tree_clusters = merge_matrix_otus(dist_matrix, tree_clusters, otu_list, otu_a, otu_b)
 		#print("DEBUG 2 : " + str(dist_matrix)) # DEBUG
 		
 		# update OTU list
@@ -131,17 +127,25 @@ def upgma(otu_list, dist_matrix):
 		otu_list.remove(otu_a)
 		otu_list.remove(otu_b)
 
-		# update tree
-		tree = U_Tree()
-		tree.right = otu_a
-		tree.right_dist = branch_lenght
-		tree.left = otu_b
-		tree.left_dist = branch_lenght
+		# update tree : new tree node
+		new_tree_node = U_Tree()
+		new_tree_node.right = otu_a # TODO
+		new_tree_node.right_dist = branch_lenght
+		new_tree_node.left = otu_b # TODO
+		new_tree_node.left_dist = branch_lenght
+
+		tree_clusters[new_otu] = new_tree_node 
+		tree_clusters2.append(new_tree_node) 
 
 		# DEBUG
 		print("DEBUG otu list: " + str(otu_list))
 
-	return tree
+	# DEBUG
+	for tree in tree_clusters2:
+		print("DEBUG tree")
+		tree.print_tree()
+
+	return tree_clusters[otu_list[0]]	
 	
 # objetivos:
 # - construcao de arvores filogeneticas
@@ -182,30 +186,29 @@ dist_matrix[('gib', 'hum')] = 0.205
 dist_matrix[('gib', 'chi')] = 0.214
 #dist_matrix[('gib', 'gib')] = 0.0
 
-# DEBUG : test tree
-test_tree = U_Tree()
-test_tree.left = "folhaLOKA"
-test_tree.left_dist = 5
-test_tree.right = U_Tree()
-test_tree.right_dist = 1
-test_tree.right.right = "oloko"
-test_tree.right.right_dist = 4
-test_tree.right.left = "bixo"
-test_tree.right.left_dist = 4
 
-# DEBUG print
-print("printing test tree:")
-test_tree.print_tree()
-
-# DEBUG distance to the leaves
-leaves_dist = test_tree.get_leaves_dist()
-print("leaves dist : " + str(leaves_dist))
-
-if(test_tree.is_ultrametric()):
-	print("tree is ultrametric")
-else:
-	print("tree is not ultrametric")
-
+# ##############
+# # DEBUG : test tree
+# test_tree = U_Tree()
+# test_tree.left = "folhaLOKA"
+# test_tree.left_dist = 5
+# test_tree.right = U_Tree()
+# test_tree.right_dist = 1
+# test_tree.right.right = "oloko"
+# test_tree.right.right_dist = 4
+# test_tree.right.left = "bixo"
+# test_tree.right.left_dist = 4
+# # DEBUG print
+# print("printing test tree:")
+# test_tree.print_tree()
+# # DEBUG distance to the leaves
+# leaves_dist = test_tree.get_leaves_dist()
+# print("leaves dist : " + str(leaves_dist))
+# if(test_tree.is_ultrametric()):
+# 	print("tree is ultrametric")
+# else:
+# 	print("tree is not ultrametric")
+# ##############
 
 # inicializacao da lista de OTUs
 otu_list = []
