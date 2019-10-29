@@ -29,29 +29,38 @@ class Tree:
 	
 	# printing function ( CALL THIS )
 	def print_tree(self): 
-		self.print_subtree(self.left, 1, self.left_dist)
 		self.print_subtree(self.right, 1, self.right_dist)
+		self.print_subtree(self.left, 1, self.left_dist)
+
 
 	# auxiliary printing function
 	def print_subtree(self, subtree, level, dist):
 		if(isinstance(subtree, Tree)):
+			print(level*'   '  + '-')
 			self.print_subtree(subtree.left, level+1, subtree.left_dist)
-			print(level*'   '+'-' + str(dist) + '-')
+			print(level*'   ' + level*'-' + str(dist) + level*'-')
 			self.print_subtree(subtree.right, level+1, subtree.right_dist)
+			print(level*'   '  + '-')
 		elif(isinstance(subtree, str)):
-			print(level*'   ' + level*'--'+ '-'+str(dist)+ level*'--' +'\t'+ subtree)
+			print(2*level*'   ' + level*' - '+str(dist)+ level*' - ' +'\t'+ subtree)
 
 
+# returns the q_matrix generated from dist_matrix
+# according to the neighbour joining algorithm
 def get_q_matrix(dist_matrix, otu_list):
+	# dist_matrix : dicionario com as distancias entre as OTUs
+	# otu_list : lista das "OTUs" no passo atual ("clusters")
 
+	# q_matrix is a dict
 	q_matrix = {}
 	
+	# create a q_matrix element for each dist_matrix element
 	for otu_pair in dist_matrix.keys():
 		
-		#print(otu_pair) # DEBUG
-		
+		# get otu pair
 		otu_a, otu_b = otu_pair
 		
+		# sum of the distances for otu_a and otu_b
 		sum_a, sum_b = 0, 0
 		for otu in otu_list:
 			if(otu != otu_a):
@@ -59,13 +68,23 @@ def get_q_matrix(dist_matrix, otu_list):
 			if(otu != otu_b):
 				sum_b = sum_b + dist_matrix[(otu_b, otu)]
 
+		# q_matrix formula
 		q_matrix[otu_pair] = (len(otu_list) - 2) * dist_matrix[otu_pair] - sum_a - sum_b
-
+		print("DEBUG calculo q_matrix")
+		print(sum_a)
+		print(sum_b)
+		print(dist_matrix[otu_pair])
+		print(otu_list)
+		print((len(otu_list) - 2))
+		print(q_matrix[otu_pair])
 
 	return q_matrix
 
 # returns dist_matrix with otu_a and otu_b fused into a new otu
 def update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b):
+	# dist_matrix : dicionario com as distancias entre as OTUs
+	# otu_list : lista das "OTUs" no passo atual ("clusters")
+	# otu_a, otu_b : OTUs a serem fusionadas em uma nova OTU
 
 	# add new otu
 	new_otu = otu_a + '-' + otu_b
@@ -79,21 +98,21 @@ def update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b):
 
 	# remove otu_a and otu_b
 	for otu in otu_list:
-		if otu != otu_a:
-			key = (otu, otu_a)
-			dist_matrix.pop(key, None)
-			key = (otu_a, otu)
-			dist_matrix.pop(key, None)
-		if otu != otu_b:
-			key = (otu, otu_b)
-			dist_matrix.pop(key, None)
-			key = (otu_b, otu)
-			dist_matrix.pop(key, None)
+		# remove otu_a distances
+		key = (otu, otu_a)
+		dist_matrix.pop(key, None)
+		key = (otu_a, otu)
+		dist_matrix.pop(key, None)
+		# remove otu_b distances
+		key = (otu, otu_b)
+		dist_matrix.pop(key, None)
+		key = (otu_b, otu)
+		dist_matrix.pop(key, None)
 
 	return dist_matrix
 
-# Agglomerative methods for ultrametric trees (Neighbor Joining)
-def neighbor_joining(dist_matrix):
+# Agglomerative methods for ultrametric trees (Neighbour Joining)
+def neighbour_joining(dist_matrix):
 	# dist_matrix : dicionario com as distancias entre as OTUs
 
 	# inicializacao da lista de OTUs
@@ -104,7 +123,7 @@ def neighbor_joining(dist_matrix):
 		if(key[1] not in otu_list):
 			otu_list.append(key[1])
 	
-	# initialize tree
+	# initialize tree clusters
 	tree_clusters = {}
 	for otu in otu_list:
 		tree_clusters[otu] = otu
@@ -114,9 +133,12 @@ def neighbor_joining(dist_matrix):
 
 		# calcular matriz Q
 		q_matrix = get_q_matrix(dist_matrix, otu_list)
+		print("DEBUG q_matrix")
+		print(q_matrix)
 
 		# find smallest distance for clustering
 		otu_a, otu_b = min(q_matrix, key=q_matrix.get)
+		print("DEBUG otu_a e otu_b: " + otu_a + "  " + otu_b)
 
 		# branch lenght estimation
 		sum_a, sum_b = 0, 0
@@ -125,7 +147,9 @@ def neighbor_joining(dist_matrix):
 				sum_a = sum_a + dist_matrix[(otu_a, otu)]
 			if(otu != otu_b):
 				sum_b = sum_b + dist_matrix[(otu_b, otu)]
-		branch_lenght_a = (dist_matrix[(otu_a, otu_b)])/2 + (1/(2*len(otu_list) - 2))*(sum_a - sum_b)
+		#branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_a - sum_b) ))
+		#branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
+		branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a) ))
 		branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
 
 		# update distance matrix
@@ -140,17 +164,9 @@ def neighbor_joining(dist_matrix):
 		# update tree : new tree node
 		new_tree_node = Tree()
 		new_tree_node.right = tree_clusters[otu_a]
-		if(isinstance(new_tree_node.right, Tree)):
-			#### AQUI TEM Q CORRIGIR EU ACHO
-			new_tree_node.right_dist = branch_lenght_a - new_tree_node.right.get_leaves_dist() #############################################################3
-		else: # nodo folha
-			new_tree_node.right_dist = branch_lenght_a
+		new_tree_node.right_dist = branch_lenght_a
 		new_tree_node.left = tree_clusters[otu_b]
-		if(isinstance(new_tree_node.left, Tree)):
-			#### AQUI TEM Q CORRIGIR EU ACHO
-			new_tree_node.left_dist = branch_lenght_b - new_tree_node.left.get_leaves_dist() #################################
-		else: # nodo folha
-			new_tree_node.left_dist = branch_lenght_b
+		new_tree_node.left_dist = branch_lenght_b
 		
 		# update tree clusters
 		tree_clusters.pop(otu_a)
@@ -205,33 +221,46 @@ dist_matrix[('gib', 'chi')] = 0.214
 #dist_matrix[('gib', 'gib')] = 0.0
 
 
-# ##############
-# # DEBUG : test tree
-# test_tree = U_Tree()
-# test_tree.left = "folhaLOKA"
-# test_tree.left_dist = 5
-# test_tree.right = U_Tree()
-# test_tree.right_dist = 1
-# test_tree.right.right = "oloko"
-# test_tree.right.right_dist = 4
-# test_tree.right.left = "bixo"
-# test_tree.right.left_dist = 4
-# # DEBUG print
-# print("printing test tree:")
-# test_tree.print_tree()
-# # DEBUG distance to the leaves
-# leaves_dist = test_tree.get_leaves_dist()
-# print("leaves dist : " + str(leaves_dist))
-# if(test_tree.is_ultrametric()):
-# 	print("tree is ultrametric")
-# else:
-# 	print("tree is not ultrametric")
-# ##############
-
-
 # construcao de uma arvore ultrametrica filogenetica a partir da matriz de distancias usando UPGMA
-tree = neighbor_joining(dist_matrix)
+tree = neighbour_joining(dist_matrix)
 
 # printar resultados
 print("printing resulting tree:")
 tree.print_tree()
+
+
+############################################################################
+# DEBUG  test
+dist_matrix = {}
+
+dist_matrix[('a', 'b')] = 5
+dist_matrix[('a', 'c')] = 9
+dist_matrix[('a', 'd')] = 9
+dist_matrix[('a', 'e')] = 8
+
+dist_matrix[('b', 'a')] = 5
+dist_matrix[('b', 'c')] = 10
+dist_matrix[('b', 'd')] = 10
+dist_matrix[('b', 'e')] = 9
+
+dist_matrix[('c', 'a')] = 9
+dist_matrix[('c', 'b')] = 10
+dist_matrix[('c', 'd')] = 8
+dist_matrix[('c', 'e')] = 7
+
+dist_matrix[('d', 'a')] = 9
+dist_matrix[('d', 'b')] = 10
+dist_matrix[('d', 'c')] = 8
+dist_matrix[('d', 'e')] = 3
+
+dist_matrix[('e', 'a')] = 8
+dist_matrix[('e', 'b')] = 9
+dist_matrix[('e', 'c')] = 7
+dist_matrix[('e', 'd')] = 3
+
+tree = neighbour_joining(dist_matrix)
+
+# printar resultados
+print("printing resulting tree:")
+tree.print_tree()
+
