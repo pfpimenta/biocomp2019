@@ -141,12 +141,14 @@ def neighbor_joining(dist_matrix):
 		new_tree_node = Tree()
 		new_tree_node.right = tree_clusters[otu_a]
 		if(isinstance(new_tree_node.right, Tree)):
-			new_tree_node.right_dist = branch_lenght_a - new_tree_node.right.get_leaves_dist()
+			#### AQUI TEM Q CORRIGIR EU ACHO
+			new_tree_node.right_dist = branch_lenght_a - new_tree_node.right.get_leaves_dist() #############################################################3
 		else: # nodo folha
 			new_tree_node.right_dist = branch_lenght_a
 		new_tree_node.left = tree_clusters[otu_b]
 		if(isinstance(new_tree_node.left, Tree)):
-			new_tree_node.left_dist = branch_lenght_b - new_tree_node.left.get_leaves_dist()
+			#### AQUI TEM Q CORRIGIR EU ACHO
+			new_tree_node.left_dist = branch_lenght_b - new_tree_node.left.get_leaves_dist() #################################
 		else: # nodo folha
 			new_tree_node.left_dist = branch_lenght_b
 		
