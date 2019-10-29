@@ -70,13 +70,13 @@ def get_q_matrix(dist_matrix, otu_list):
 
 		# q_matrix formula
 		q_matrix[otu_pair] = (len(otu_list) - 2) * dist_matrix[otu_pair] - sum_a - sum_b
-		print("DEBUG calculo q_matrix")
-		print(sum_a)
-		print(sum_b)
-		print(dist_matrix[otu_pair])
-		print(otu_list)
-		print((len(otu_list) - 2))
-		print(q_matrix[otu_pair])
+#		print("DEBUG calculo q_matrix")
+#		print(sum_a)
+#		print(sum_b)
+#		print(dist_matrix[otu_pair])
+#		print(otu_list)
+#		print((len(otu_list) - 2))
+#		print(q_matrix[otu_pair])
 
 	return q_matrix
 
@@ -133,12 +133,12 @@ def neighbour_joining(dist_matrix):
 
 		# calcular matriz Q
 		q_matrix = get_q_matrix(dist_matrix, otu_list)
-		print("DEBUG q_matrix")
-		print(q_matrix)
+#		print("DEBUG q_matrix")
+#		print(q_matrix)
 
 		# find smallest distance for clustering
 		otu_a, otu_b = min(q_matrix, key=q_matrix.get)
-		print("DEBUG otu_a e otu_b: " + otu_a + "  " + otu_b)
+#		print("DEBUG otu_a e otu_b: " + otu_a + "  " + otu_b)
 
 		# branch lenght estimation
 		sum_a, sum_b = 0, 0
@@ -147,10 +147,10 @@ def neighbour_joining(dist_matrix):
 				sum_a = sum_a + dist_matrix[(otu_a, otu)]
 			if(otu != otu_b):
 				sum_b = sum_b + dist_matrix[(otu_b, otu)]
-		#branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_a - sum_b) ))
-		#branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
-		branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a) ))
+		branch_lenght_a = (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a)
 		branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
+#		branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a) ))
+#		branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
 
 		# update distance matrix
 		dist_matrix = update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b)
@@ -178,8 +178,6 @@ def neighbour_joining(dist_matrix):
 
 	return tree_clusters[otu_list[0]]	
 
-
-	return tree	
 # objetivos:
 # - construcao de arvores filogeneticas
 # - implementacao do metodo Agglomerative methods for ultrametric trees (UPGMA)
