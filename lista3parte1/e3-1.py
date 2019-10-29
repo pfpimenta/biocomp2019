@@ -57,7 +57,6 @@ class U_Tree:
 	# printing function ( CALL THIS )
 	def print_tree(self): 
 		self.print_subtree(self.left, 1, self.left_dist)
-
 		self.print_subtree(self.right, 1, self.right_dist)
 
 	# auxiliary printing function
@@ -87,16 +86,16 @@ def update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b):
 
 	# remove otu_a and otu_b
 	for otu in otu_list:
-		if otu != otu_a:
-			key = (otu, otu_a)
-			dist_matrix.pop(key, None)
-			key = (otu_a, otu)
-			dist_matrix.pop(key, None)
-		if otu != otu_b:
-			key = (otu, otu_b)
-			dist_matrix.pop(key, None)
-			key = (otu_b, otu)
-			dist_matrix.pop(key, None)
+		# remove otu_a distances
+		key = (otu, otu_a)
+		dist_matrix.pop(key, None)
+		key = (otu_a, otu)
+		dist_matrix.pop(key, None)
+		# remove otu_b distances
+		key = (otu, otu_b)
+		dist_matrix.pop(key, None)
+		key = (otu_b, otu)
+		dist_matrix.pop(key, None)
 
 	return dist_matrix
 
@@ -113,7 +112,7 @@ def upgma(dist_matrix):
 		if(key[1] not in otu_list):
 			otu_list.append(key[1])
 	
-	# initialize tree
+	# initialize tree clusters
 	tree_clusters = {}
 	for otu in otu_list:
 		tree_clusters[otu] = otu
