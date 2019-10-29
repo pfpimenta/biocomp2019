@@ -72,9 +72,8 @@ class U_Tree:
 			print(2*level*'   ' + level*' - '+str(dist)+ level*' - ' +'\t'+ subtree)
 
 
-# TODO terminar :
 # returns dist_matrix with otu_a and otu_b fused into a new otu
-def merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b):
+def update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b):
 
 	# add new otu
 	new_otu = otu_a + '-' + otu_b
@@ -129,7 +128,7 @@ def upgma(dist_matrix):
 		branch_lenght = dist_matrix[(otu_a, otu_b)]/2
 
 		# update distance matrix
-		dist_matrix = merge_matrix_otus(dist_matrix, otu_list, otu_a, otu_b)
+		dist_matrix = update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b)
 		
 		# update OTU list
 		new_otu = otu_a + '-' + otu_b
