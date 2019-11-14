@@ -70,13 +70,6 @@ def get_q_matrix(dist_matrix, otu_list):
 
 		# q_matrix formula
 		q_matrix[otu_pair] = (len(otu_list) - 2) * dist_matrix[otu_pair] - sum_a - sum_b
-#		print("DEBUG calculo q_matrix")
-#		print(sum_a)
-#		print(sum_b)
-#		print(dist_matrix[otu_pair])
-#		print(otu_list)
-#		print((len(otu_list) - 2))
-#		print(q_matrix[otu_pair])
 
 	return q_matrix
 
@@ -133,12 +126,9 @@ def neighbour_joining(dist_matrix):
 
 		# calcular matriz Q
 		q_matrix = get_q_matrix(dist_matrix, otu_list)
-#		print("DEBUG q_matrix")
-#		print(q_matrix)
 
 		# find smallest distance for clustering
 		otu_a, otu_b = min(q_matrix, key=q_matrix.get)
-#		print("DEBUG otu_a e otu_b: " + otu_a + "  " + otu_b)
 
 		# branch lenght estimation
 		sum_a, sum_b = 0, 0
@@ -149,8 +139,9 @@ def neighbour_joining(dist_matrix):
 				sum_b = sum_b + dist_matrix[(otu_b, otu)]
 		branch_lenght_a = (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a)
 		branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
-#		branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a) ))
-#		branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
+		# versao com distancias arredondadas (mais paredida com a do wikipedia mas nao funciona para o nosso caso)
+		#branch_lenght_a = int(round( (dist_matrix[(otu_a, otu_b)])/2 + (1.0/(2*len(otu_list) - 2))*(sum_b - sum_a) ))
+		#branch_lenght_b = (dist_matrix[(otu_a, otu_b)]) - branch_lenght_a
 
 		# update distance matrix
 		dist_matrix = update_dist_matrix(dist_matrix, otu_list, otu_a, otu_b)
@@ -225,40 +216,3 @@ tree = neighbour_joining(dist_matrix)
 # printar resultados
 print("printing resulting tree:")
 tree.print_tree()
-
-
-############################################################################
-# DEBUG  test
-dist_matrix = {}
-
-dist_matrix[('a', 'b')] = 5
-dist_matrix[('a', 'c')] = 9
-dist_matrix[('a', 'd')] = 9
-dist_matrix[('a', 'e')] = 8
-
-dist_matrix[('b', 'a')] = 5
-dist_matrix[('b', 'c')] = 10
-dist_matrix[('b', 'd')] = 10
-dist_matrix[('b', 'e')] = 9
-
-dist_matrix[('c', 'a')] = 9
-dist_matrix[('c', 'b')] = 10
-dist_matrix[('c', 'd')] = 8
-dist_matrix[('c', 'e')] = 7
-
-dist_matrix[('d', 'a')] = 9
-dist_matrix[('d', 'b')] = 10
-dist_matrix[('d', 'c')] = 8
-dist_matrix[('d', 'e')] = 3
-
-dist_matrix[('e', 'a')] = 8
-dist_matrix[('e', 'b')] = 9
-dist_matrix[('e', 'c')] = 7
-dist_matrix[('e', 'd')] = 3
-
-tree = neighbour_joining(dist_matrix)
-
-# printar resultados
-print("printing resulting tree:")
-tree.print_tree()
-
