@@ -6,9 +6,10 @@
 
 #######################################################
 ## imports
-import pandas
+import random
 import csv
 import numpy as np
+import pandas
 
 #######################################################
 ## funcoes
@@ -16,7 +17,8 @@ def k_means(k, points):
     # separa os pontos em k grupos/clusters
     pass # TODO
 
-
+##
+# tiradas de https://datasciencelab.wordpress.com/2013/12/12/clustering-with-k-means-in-python/
 def cluster_points(X, mu):
     clusters  = {}
     for x in X:
@@ -49,40 +51,59 @@ def find_centers(X, K):
         # Reevaluate centers
         mu = reevaluate_centers(oldmu, clusters)
     return(mu, clusters)
-
+##
 
 #######################################################
 ## main
 
 # carregar dados do arquivo csv
 
-#df = pandas.read_csv('leukemia_big.csv')#, index_col='Name')
-
-#
-
-points = np.array([])
-with open('leukemia_big.csv') as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+# # versao sem pandas
+# points = np.array([])
+# with open('leukemia_big.csv') as csvfile:
+#     csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     
-    # get first line ('ALL' or 'AML)
-    labels = next(csvreader)
-    labels = labels[0].split(',')
+#     # get first line ('ALL' or 'AML)
+#     labels = next(csvreader)
+#     labels = labels[0].split(',')
 
-    for row in csvreader:
-        coco = row[0].split(',')
-        coco = list(map(float, coco))
-        print(coco)
-        input()
+#     # get num and dim of points
+#     num_points = len(labels)
+#     dim = len([0 for row in csvreader])
+#     #print("DEBUG num_points e dim: " +str(num_points)+" e "+str(dim)) #DEBUG
 
+#     #points = np.empty((num_points, dim)) # init empty array
+#     points = [ [] for i in range(dim)] # init empty array
+#     print(points)
 
+#     # fill points array
+#     for row in csvreader:
+#         coco = row[0].split(',')
+#         coco = list(map(float, coco))
+#         print(coco)
+#         input()
+
+# versao com pandas
+df = pandas.read_csv('leukemia_big.csv', header=None)
+
+# # dummy data
+# points = [[0,1], [-2,-5], [-1,42]]
+# labels = ['ALL','AML','ALL']
+
+# get data from dataframe
+labels = df.iloc[0]
+df = df.drop(0) # remove labels from dataframe
+points = df.values
 
 # debug data print
 #print(df)
 #print(df.head())
 #print(df.at([10, 10]))
+print("DEBUG pointss: ")# + labels)
+print(points)
+print("DEBUG labels: ")# + labels)
+print(labels)
 
-points = df
-points = [[0,1], [-2,-5], [-1,42]]
 
 k = 2
 k_means(k, points)
