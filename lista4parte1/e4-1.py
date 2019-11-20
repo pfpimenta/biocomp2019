@@ -57,10 +57,6 @@ def k_means(k, points):
     # gerar centroides iniciais aleatoriamente mas perto da media dos pontos
     centroids = [np.mean(points, axis=0) + 0.1 * np.random.rand(num_dim) for i in range(k)]
     old_centroids = np.zeros((k, num_dim))
-    # centroids = (np.random.rand(k, num_dim) ) - 0.5 # entre -0.5 e 0.5
-    # old_centroids = (np.random.rand(k, num_dim) * 2) -1
-    # print("DEBUG centroids")
-    # print(centroids)
 
     # classificacao inicial dos pontos
     classes = classify_points(points, centroids, num_points, k)
@@ -69,47 +65,11 @@ def k_means(k, points):
     while(not np.array_equal(centroids,old_centroids)): # enquanto os centroides nao convergirem
         old_centroids = centroids
         # atualiza centroides
-        #centroids = np.array([np.mean(points[classes==i], axis=0) for i in range(k)])
         centroids = update_centroids(points, classes, k)
         # atualiza classificacao de cada ponto
         classes = classify_points(points, centroids, num_points, k)
     
     return classes, centroids
-##
-# tiradas de https://datasciencelab.wordpress.com/2013/12/12/clustering-with-k-means-in-python/
-def cluster_points(X, mu):
-    clusters  = {}
-    for x in X:
-        bestmukey = min([(i[0], np.linalg.norm(x-mu[i[0]])) \
-                    for i in enumerate(mu)], key=lambda t:t[1])[0]
-        try:
-            clusters[bestmukey].append(x)
-        except KeyError:
-            clusters[bestmukey] = [x]
-    return clusters
- 
-def reevaluate_centers(mu, clusters):
-    newmu = []
-    keys = sorted(clusters.keys())
-    for k in keys:
-        newmu.append(np.mean(clusters[k], axis = 0))
-    return newmu
- 
-def has_converged(mu, oldmu):
-    return  (set([tuple(a) for a in mu]) == set([tuple(a) for a in oldmu]))
- 
-def find_centers(X, K):
-    # Initialize to K random centers
-    oldmu = random.sample(X, K)
-    mu = random.sample(X, K)
-    while not has_converged(mu, oldmu):
-        oldmu = mu
-        # Assign all points in X to clusters
-        clusters = cluster_points(X, mu)
-        # Reevaluate centers
-        mu = reevaluate_centers(oldmu, clusters)
-    return(mu, clusters)
-##
 
 #######################################################
 ## main
@@ -143,8 +103,10 @@ k = 2
 classes, centroids = k_means(k, points)
 print("\nResultado para K=2")
 print(classes)
+print(centroids)
 
 k = 3
 classes, centroids = k_means(k, points)
 print("\nResultado para K=3")
 print(classes)
+print(centroids)
