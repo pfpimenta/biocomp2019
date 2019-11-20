@@ -91,18 +91,21 @@ df = pandas.read_csv('leukemia_big.csv', header=None)
 # labels = ['ALL','AML','ALL']
 
 # get data from dataframe
-labels = df.iloc[0]
+labels = df.iloc[0] # get labels (first row)
 df = df.drop(0) # remove labels from dataframe
-points = df.values
+df = df.T # transpose data
+points = (df.values).astype(np.float) # convert strings to floats and put it in a numpy array
 
 # debug data print
 #print(df)
 #print(df.head())
 #print(df.at([10, 10]))
-print("DEBUG pointss: ")# + labels)
+print("DEBUG points: ")# + labels)
 print(points)
 print("DEBUG labels: ")# + labels)
 print(labels)
+print("DEBUG points[0]: ")# + labels)
+print(points[0])
 
 
 k = 2
