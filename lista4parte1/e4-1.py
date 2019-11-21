@@ -32,19 +32,18 @@ def update_centroids(points, classes, k):
 # retorna um numpy array onde cada posiçao i contem a classe atribuida ao ponto i
 def classify_points(points, centroids, num_points, k):
     classes = np.zeros(num_points)
-    classes = classes + k # sei la kkkk só pra evitar erro
     for i in range(num_points):
         p = points[i]
         min_dist = 99999
         for j in range(k):
             c = centroids[j]
-            dist = np.linalg.norm(p-c)
-            if(dist < min_dist):
+            dist = np.linalg.norm(p-c) # distancia entre ponto p e centroide c
+            if(dist < min_dist): # atualiza classe do centroide mais perto do ponto p
                 min_dist = dist
                 classes[i] = j
     return classes
 
-# retorna os centroides de cada classe 
+# retorna as classes de cada ponto e os centroides de cada classe 
 def k_means(k, points):
     # points[num_points, num_dim] : pontos a classificar em k grupos
     # k : numero de grupos para classificar os pontos
