@@ -14,11 +14,25 @@ import pandas
 #######################################################
 ## funcoes
 
-# retorna o score de um agrupamento de vetores
-# OBS: so funciona com clustering em dois grupos (k=2)
+# retorna o score de um agrupamento de pontos/vetores
+# OBS: so funciona com clustering em dois grupos (k=2 : ALL e AML)
 def get_clustering_score(classes, labels):
-    assert()
-    pass
+
+    assert(np.shape(classes )== np.shape(labels))
+    vecloko = np.ones(np.shape(classes)) # vetor de 1s para calculo do score
+
+    # caso A -> ALL: 0, AML: 1
+    matches_A = np.sum(vecloko[np.logical_and(labels=='ALL',classes==0)])
+    matches_A = matches_A + np.sum(vecloko[np.logical_and(labels=='AML',classes==1)])
+    
+    # caso B -> ALL: 1, AML: 0
+    matches_B = np.sum(vecloko[np.logical_and(labels=='ALL',classes==1)])
+    matches_B = matches_B + np.sum(vecloko[np.logical_and(labels=='AML',classes==0)])
+
+    # score = matches / num_points
+    score = float(max(matches_A, matches_B)) / np.size(classes)
+
+    return score
 
 # retorna um numpy array com vetores normalizados de 0 a 1
 def normalize_points(points):
@@ -95,16 +109,11 @@ def k_means(k, points):
 #######################################################
 ## main
 
-# # dummy data
-# points = [[0,1], [-2,-5], [-1,42], [10,1], [2,-3], [1,-10]]
-# labels = ['ALL','AML','ALL', 'ALL','AML','AML']
-
 # carregar dados do arquivo csv
 df = pandas.read_csv('leukemia_big.csv', header=None)
 
 # get data from dataframe
-labels = df.iloc[0] # get labels (first row)
-print(labels)
+labels = np.array(df.iloc[0].values) # get labels (first row)
 df = df.drop(0) # remove labels from dataframe
 df = df.T # transpose data
 points = (df.values).astype(np.float) # convert strings to floats and put it in a numpy array
@@ -112,14 +121,23 @@ points = normalize_points(points) # normalize to [0,1] interval
 
 k = 2
 classes, centroids = k_means(k, points)
-# score = get_clustering_score(classes, labels)
+score = get_clustering_score(classes, labels)
 print("\nResultado para K=2")
-print(classes)
-print(centroids)
-#print("...final score: " + str(score))
+print("...classes: "+str(classes))
+print("...centroides: "+str(centroids))
+print("...score: " + str(score))
 
 k = 3
 classes, centroids = k_means(k, points)
 print("\nResultado para K=3")
-print(classes)
-print(centroids)
+print("...classes: "+str(classes))
+print("...centroides: "+str(centroids))
+
+# teste para ver score medio
+k = 2
+score_list = []
+for i in range(100):
+    classes, centroids = k_means(k, points)
+    score = get_clustering_score(classes, labels)
+    score_list.append(score)
+print("\n\n\nscore medio: "+ str(np.mean(score_list)))
