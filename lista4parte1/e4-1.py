@@ -14,7 +14,28 @@ import pandas
 #######################################################
 ## funcoes
 
-# retorna um numpy array de tamanho k
+# retorna o score de um agrupamento de vetores
+# OBS: so funciona com clustering em dois grupos (k=2)
+def get_clustering_score(classes, labels):
+    assert()
+    pass
+
+# retorna um numpy array com vetores normalizados de 0 a 1
+def normalize_points(points):
+
+    num_points, num_dim = np.shape(points)
+    normalized_points = np.zeros((num_points, num_dim))
+
+    # normalizar valores em cada dimensao
+    for i in range(num_dim):
+        # x = x - min(x)
+        normalized_points[:, i] = points[:, i] -np.min(points[:, i])
+        # x = x/max(x)
+        normalized_points[:, i] = normalized_points[:, i] / np.max(normalized_points[:, i])
+
+    return normalized_points
+
+# retorna um numpy array contendo a posicao dos k centroides
 def update_centroids(points, classes, k):
 
     num_points, num_dim = np.shape(points)
@@ -44,6 +65,7 @@ def classify_points(points, centroids, num_points, k):
     return classes
 
 # retorna as classes de cada ponto e os centroides de cada classe 
+# (dois numpy arrays)
 def k_means(k, points):
     # points[num_points, num_dim] : pontos a classificar em k grupos
     # k : numero de grupos para classificar os pontos
@@ -82,27 +104,19 @@ df = pandas.read_csv('leukemia_big.csv', header=None)
 
 # get data from dataframe
 labels = df.iloc[0] # get labels (first row)
+print(labels)
 df = df.drop(0) # remove labels from dataframe
 df = df.T # transpose data
 points = (df.values).astype(np.float) # convert strings to floats and put it in a numpy array
-# TODO : normalize points
-
-# # debug data print
-# print(df)
-# print(df.head())
-# print(df.at([10, 10]))
-# print("DEBUG points: ")
-# print(points)
-# print("DEBUG labels: ")
-# print(labels)
-# print("DEBUG points[0]: ")
-# print(points[0])
+points = normalize_points(points) # normalize to [0,1] interval
 
 k = 2
 classes, centroids = k_means(k, points)
+# score = get_clustering_score(classes, labels)
 print("\nResultado para K=2")
 print(classes)
 print(centroids)
+#print("...final score: " + str(score))
 
 k = 3
 classes, centroids = k_means(k, points)
