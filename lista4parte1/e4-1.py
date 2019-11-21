@@ -7,7 +7,6 @@
 #######################################################
 ## imports
 import random
-import csv
 import numpy as np
 import pandas
 
@@ -133,11 +132,22 @@ print("\nResultado para K=3")
 print("...classes: "+str(classes))
 print("...centroides: "+str(centroids))
 
-# teste para ver score medio
-k = 2
-score_list = []
-for i in range(100):
-    classes, centroids = k_means(k, points)
-    score = get_clustering_score(classes, labels)
-    score_list.append(score)
-print("\n\n\nscore medio: "+ str(np.mean(score_list)))
+# DEBUG pro trab
+vecloko = np.ones(np.shape(classes)) # vetor de 1s para calculo do score
+all0 = np.sum(vecloko[np.logical_and(labels=='ALL',classes==0)])
+all1 = np.sum(vecloko[np.logical_and(labels=='ALL',classes==1)])
+all2 = np.sum(vecloko[np.logical_and(labels=='ALL',classes==2)])
+aml0 = np.sum(vecloko[np.logical_and(labels=='AML',classes==0)])
+aml1 = np.sum(vecloko[np.logical_and(labels=='AML',classes==1)])
+aml2 = np.sum(vecloko[np.logical_and(labels=='AML',classes==2)])
+print("ALL=0: " + str(all0) + " ALL=1: " + str(all1)  + " ALL=2: " + str(all2) + " AML=0: " + str(aml0) + " AML=1: " + str(aml1) + " AML=2: " + str(aml2))
+
+
+# # teste para ver score medio
+# k = 2
+# score_list = []
+# for i in range(100):
+#     classes, centroids = k_means(k, points)
+#     score = get_clustering_score(classes, labels)
+#     score_list.append(score)
+# print("\n\n\nscore medio: "+ str(np.mean(score_list)))
