@@ -4,21 +4,76 @@
 # exercicio a da lista 4 parte 2 de Biologia Computacional
 # Pedro Foletto Pimenta, novembro de 2019
 
+# objetivo: encontrar um conjunto reduzido de genes
+# que separe o conjunto de amostras e que aumente
+# a predominância de rótulos ALL e AML em um dos grupos.
+
 #######################################################
 ## imports
 import random
 import csv
 import numpy as np
 import pandas
+import time
 
 #######################################################
 ## funcoes
+
+# retorna um conjunto reduzido de genes
+# que separe o melhor possivel o conjunto de amostras
+# de acordo com os rotulos (ALL e AML)
+def alg_genetico(points, labels):
+    
+    # parametros fixos do alg genetico
+    new_num_dim = 3572 # num de genes (features) escolhidos do total
+    population_size = 50
+    num_generations = 100
+    # parametros 'variaveis' do alg genetico
+    prob_mutation = 0.25 # chance de ocorrer uma mutacao em um novo individuo
+
+    num_points, num_dim = np.shape(points)
+
+    # populacao aleatoria inicial
+    population = np.array([random.sample(range(num_dim), new_num_dim) for i in range(population_size)])
+    # print(np.shape(population)) # (50, 3572) # DEBUG
+
+    for generation in range(num_generations):
+        # avalia populacao
+        scores = evaluate_population(population, labels) # TODO
+        # gera nova populacao
+        population = generate_new_population(population, scores) # TODO
+
+    # sort population to get the best solution
+    population = sort_population(population, scores)
+    best_solution = population[0]
+    #best_solution_score =  # TODO
+
+    return best_solution#, best_solution_score
+
+# gera nova populacao de solucoes com base na performance da ultima
+def evaluate_population(population, labels):
+    
+    scores = np.zeros(len(labels))
+    # TODO
+    return scores
+
+# gera nova populacao de solucoes com base na performance da ultima
+def generate_new_population(population, scores):
+    
+    new_population = population # TODO
+    return population
+
+# ordena as solucoes de uma populacao com base nos seus scores
+def sort_population(population, scores):
+    
+    sorted_population = population # TODO
+    return sorted_population
 
 # retorna o score de um agrupamento de pontos/vetores
 # OBS: so funciona com clustering em dois grupos (k=2 : ALL e AML)
 def get_clustering_score(classes, labels):
 
-    assert(np.shape(classes )== np.shape(labels))
+    assert(np.shape(classes)== np.shape(labels))
     vecloko = np.ones(np.shape(classes)) # vetor de 1s para calculo do score
 
     # caso A -> ALL: 0, AML: 1
@@ -109,16 +164,29 @@ def k_means(k, points):
 #######################################################
 ## main
 
+print("carregando dados...")
+
 # carregar dados do arquivo csv
 df = pandas.read_csv('leukemia_big.csv', header=None)
 
 # get data from dataframe
 labels = np.array(df.iloc[0].values) # get labels (first row)
-print(labels)
 df = df.drop(0) # remove labels from dataframe
 df = df.T # transpose data
 points = (df.values).astype(np.float) # convert strings to floats and put it in a numpy array
 points = normalize_points(points) # normalize to [0,1] interval
 
+k=2
 
-# TODO
+print("rodando algoritmo genetico...")
+startTime = time.time() # medir o tempo de execucao a partir daqui
+
+# get melhor combinaçao de 3572 genes
+best_solution = alg_genetico(points, labels)
+#best_solution, best_solution_score = alg_genetico(points, labels) # TODO
+print("\n\n...Melhor selecao de genes encontrada: " + str(best_solution))
+#print("...score: " + str(best_solution_score))
+endTime = time.time()
+totalTime = endTime - startTime
+print("...tempo de execucao: " + str(totalTime))
+
