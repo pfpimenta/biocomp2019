@@ -48,6 +48,8 @@ def alg_genetico(points, labels):
     best_solution = population[0]
     #best_solution_score =  # TODO
 
+    # TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
+
     return best_solution#, best_solution_score
 
 # gera nova populacao de solucoes com base na performance da ultima
@@ -184,6 +186,8 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 # get melhor combinaçao de 3572 genes
 best_solution = alg_genetico(points, labels)
 #best_solution, best_solution_score = alg_genetico(points, labels) # TODO
+# TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
+# TODO: Faça um gráfico demonstrando a convergência ao longo das 100 gerações (considere a repetição que obteve melhor aptidão ao final). 
 print("\n\n...Melhor selecao de genes encontrada: " + str(best_solution))
 #print("...score: " + str(best_solution_score))
 endTime = time.time()
