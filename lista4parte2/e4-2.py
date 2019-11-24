@@ -29,7 +29,7 @@ def alg_genetico(points, labels):
     population_size = 50
     num_generations = 100
     # parametros 'variaveis' do alg genetico
-    prob_mutation = 0.25 # chance de ocorrer uma mutacao em um novo individuo
+    prob_mutacao = 0.25 # chance de ocorrer uma mutacao em um novo individuo
 
     num_points, num_dim = np.shape(points)
 
@@ -39,37 +39,117 @@ def alg_genetico(points, labels):
 
     for generation in range(num_generations):
         # avalia populacao
-        scores = evaluate_population(population, labels) # TODO
+        scores = evaluate_population(population, points, labels)
+        print("DEBUG scores: "+str(np.shape(scores))+" mean score: "+str(np.mean(scores)))
         # gera nova populacao
-        population = generate_new_population(population, scores) # TODO
-
+        population = generate_new_population(population, scores, prob_mutacao)
+        
     # sort population to get the best solution
     population = sort_population(population, scores)
     best_solution = population[0]
-    #best_solution_score =  # TODO
+    classes, _ = k_means(2, points[:, best_solution])
+    best_solution_score = get_clustering_score(classes, labels)
 
     # TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
 
     return best_solution#, best_solution_score
 
 # gera nova populacao de solucoes com base na performance da ultima
-def evaluate_population(population, labels):
+def evaluate_population(population, points, labels):
     
-    scores = np.zeros(len(labels))
-    # TODO
+    population_size = len(population)
+    scores = np.zeros(population_size)
+    
+    for i in range(population_size):
+        solution = population[i]
+        # get only the features we want
+        # print("DEBUG solution: " + str(type(solution)) +" "+ str(np.shape(solution)))
+        # print(solution)
+        # print("DEBUG solution[0]: " + str(type(solution[0])) +" "+ str(np.shape(solution[0])))
+        # print(solution[0])
+        # print("DEBUG int(solution[0]): " + str(type(int(solution[0]))))
+        # print(int(solution[0]))
+#        print("DEBUG points: " + str(type(points)))
+        new_points = points[:, solution.astype(int)]
+        # evaluate solution
+        classes, _ = k_means(2, new_points)
+        scores[i] = get_clustering_score(classes, labels)
+
     return scores
 
 # gera nova populacao de solucoes com base na performance da ultima
-def generate_new_population(population, scores):
+def generate_new_population(population, scores, prob_mutacao):
     
-    new_population = population # TODO
-    return population
+    population, scores = sort_population(population, scores)
+
+    population_size = np.shape(population)[0]
+    #print("DEBUG population_size: "+str(population_size))
+
+    new_population = np.zeros(np.shape(population))
+
+    # primeiros 10% sao copiados dos 10% melhores da geracao passad
+    new_population[0:int(population_size/10)] = population[0:int(population_size/10)]
+
+    # proximos 30% sao cruzas de 
+    # boas solucoes da populacao passada 
+    # + chance de mutacao
+    for i in range(int(population_size/10), int(population_size*4/10)):
+        index_a = random.randint(0, int(population_size*5/10)) # um dos melhores 50%
+        index_b = random.randint(0, int(population_size*2/10)) # um dos melhores 20%
+        new_solution = crossover(population[index_a], population[index_b])
+        # chance de mutação
+        if(choseWithProb(prob_mutacao)):
+            new_solution = mutacao(new_solution)
+        new_population[i] = new_solution
+
+    # proximos 30% sao cruzas de 
+    # uma boa solucao da populacao passada
+    # e uma solucao aleatoria da populacao passada
+    # + chance de mutacao
+    for i in range(int(population_size*4/10), int(population_size*7/10)):
+        index_a = random.randint(0, int(population_size*3/10)) # um dos melhores 30%
+        index_b = random.randint(0, population_size-1) # qualquer um
+        new_solution = crossover(population[index_a], population[index_b])
+        # chance de mutação
+        if(choseWithProb(prob_mutacao)):
+            new_solution = mutacao(new_solution)
+        new_population[i] = new_solution
+
+    # proximos 30% sao cruzas de duas solucoes aleatorias da populacao passada
+    # + 100% de chance de mutacao
+    for i in range(int(population_size*7/10), population_size):
+        #print("DEBUG i "+str(i))
+        index_a = random.randint(0, population_size-1) # qualquer um
+        index_b = random.randint(0, population_size-1) # qualquer um
+        #print("DEBUG index a e b : "+str(index_a)+" e "+str(index_b))
+        new_solution = crossover(population[index_a], population[index_b])
+        # 100% de chance de mutação
+        new_solution = mutacao(new_solution)
+        new_population[i] = new_solution
+
+    return new_population
+
+
+# retorna uma nova solucao gerada pela combinacao
+# das solucoes a e b
+def crossover(solucao_a, solucao_b):
+    assert(len(solucao_a) == len(solucao_b))
+
+    return solucao_a # TODO
+
+# aplica uma mutacao em uma solucao
+def mutacao(solucao):
+    # TODO
+    return solucao
 
 # ordena as solucoes de uma populacao com base nos seus scores
 def sort_population(population, scores):
     
-    sorted_population = population # TODO
-    return sorted_population
+    sorted_indexes = np.argsort(scores)
+    sorted_population = population[sorted_indexes, :]
+    sorted_scores = scores[sorted_indexes]
+
+    return sorted_population, sorted_scores
 
 # retorna o score de um agrupamento de pontos/vetores
 # OBS: so funciona com clustering em dois grupos (k=2 : ALL e AML)
@@ -90,6 +170,13 @@ def get_clustering_score(classes, labels):
     score = float(max(matches_A, matches_B)) / np.size(classes)
 
     return score
+
+# retorna True com probabilidade oneProb
+# e False com probabilidade (1 - oneProb)
+def choseWithProb( oneProb ):
+    zeroProb = 1 - oneProb
+    result = np.random.choice([False,True], 1, p= [zeroProb, oneProb ])[0]
+    return result
 
 # retorna um numpy array com vetores normalizados de 0 a 1
 def normalize_points(points):
@@ -193,4 +280,3 @@ print("\n\n...Melhor selecao de genes encontrada: " + str(best_solution))
 endTime = time.time()
 totalTime = endTime - startTime
 print("...tempo de execucao: " + str(totalTime))
-
