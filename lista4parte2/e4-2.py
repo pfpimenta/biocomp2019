@@ -40,7 +40,7 @@ def alg_genetico(points, labels):
     for generation in range(num_generations):
         # avalia populacao
         scores = evaluate_population(population, points, labels)
-        print("DEBUG scores: "+str(np.shape(scores))+" mean score: "+str(np.mean(scores)))
+        print("DEBUG scores: "+str(np.shape(scores))+" mean score: % .4f max score: % .4f min score: % .4f"%(np.mean(scores),np.max(scores), np.min(scores)))
         # gera nova populacao
         population = generate_new_population(population, scores, prob_mutacao)
         
@@ -63,13 +63,6 @@ def evaluate_population(population, points, labels):
     for i in range(population_size):
         solution = population[i]
         # get only the features we want
-        # print("DEBUG solution: " + str(type(solution)) +" "+ str(np.shape(solution)))
-        # print(solution)
-        # print("DEBUG solution[0]: " + str(type(solution[0])) +" "+ str(np.shape(solution[0])))
-        # print(solution[0])
-        # print("DEBUG int(solution[0]): " + str(type(int(solution[0]))))
-        # print(int(solution[0]))
-#        print("DEBUG points: " + str(type(points)))
         new_points = points[:, solution.astype(int)]
         # evaluate solution
         classes, _ = k_means(2, new_points)
