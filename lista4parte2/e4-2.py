@@ -42,7 +42,7 @@ def alg_genetico(points, labels):
         scores = evaluate_population(population, points, labels)
         print("DEBUG scores: "+str(np.shape(scores))+" mean score: % .4f max score: % .4f min score: % .4f"%(np.mean(scores),np.max(scores), np.min(scores)))
         # gera nova populacao
-        population = generate_new_population(population, scores, prob_mutacao)
+        population = generate_new_population(population, scores, prob_mutacao, num_dim)
         
     # sort population to get the best solution
     population = sort_population(population, scores)
@@ -71,11 +71,11 @@ def evaluate_population(population, points, labels):
     return scores
 
 # gera nova populacao de solucoes com base na performance da ultima
-def generate_new_population(population, scores, prob_mutacao):
+def generate_new_population(population, scores, prob_mutacao, num_dim):
     
     population, scores = sort_population(population, scores)
 
-    population_size = np.shape(population)[0]
+    population_size, new_num_dim = np.shape(population)
     #print("DEBUG population_size: "+str(population_size))
 
     new_population = np.zeros(np.shape(population))
@@ -92,7 +92,9 @@ def generate_new_population(population, scores, prob_mutacao):
         new_solution = crossover(population[index_a], population[index_b])
         # chance de mutação
         if(choseWithProb(prob_mutacao)):
-            new_solution = mutacao(new_solution)
+            new_solution = mutacao(new_solution, num_dim)
+        # ordena e remove repeticoes
+        new_solution = ajusta_solucao(new_solution, num_dim, new_num_dim)
         new_population[i] = new_solution
 
     # proximos 30% sao cruzas de 
@@ -105,7 +107,9 @@ def generate_new_population(population, scores, prob_mutacao):
         new_solution = crossover(population[index_a], population[index_b])
         # chance de mutação
         if(choseWithProb(prob_mutacao)):
-            new_solution = mutacao(new_solution)
+            new_solution = mutacao(new_solution, num_dim)
+        # ordena e remove repeticoes
+        new_solution = ajusta_solucao(new_solution, num_dim, new_num_dim)
         new_population[i] = new_solution
 
     # proximos 30% sao cruzas de duas solucoes aleatorias da populacao passada
@@ -117,22 +121,48 @@ def generate_new_population(population, scores, prob_mutacao):
         #print("DEBUG index a e b : "+str(index_a)+" e "+str(index_b))
         new_solution = crossover(population[index_a], population[index_b])
         # 100% de chance de mutação
-        new_solution = mutacao(new_solution)
+        new_solution = mutacao(new_solution, num_dim)
+        # ordena e remove repeticoes
+        new_solution = ajusta_solucao(new_solution, num_dim, new_num_dim)
         new_population[i] = new_solution
 
     return new_population
 
+# retorna a solucao sem repeticoes
+def ajusta_solucao(solucao, num_dim, new_num_dim):
+    solucao = np.unique(solucao) # remove repeticoes
+    # arruma tamanho do array se necessario 
+    while(len(solucao) != new_num_dim): # enquanto nao tiver no tamanho certo
+        # completa array
+        falta = new_num_dim - len(solucao)
+        extra_values = np.array(random.sample(range(num_dim), falta))
+        solucao = np.append(solucao, extra_values)
+        # ordena e remove repeticoes
+        solucao = np.unique(solucao)
+    return solucao
 
 # retorna uma nova solucao gerada pela combinacao
 # das solucoes a e b
 def crossover(solucao_a, solucao_b):
     assert(len(solucao_a) == len(solucao_b))
+    size = len(solucao_a)
+    resultado = np.empty((size)).astype(int)
 
-    return solucao_a # TODO
+    # crossover simples de teste
+    metade = int(size/2)
+    resultado[:metade] = solucao_a[:metade]
+    resultado[metade:] = solucao_a[metade:]
+
+    return resultado
 
 # aplica uma mutacao em uma solucao
-def mutacao(solucao):
-    # TODO
+def mutacao(solucao, num_dim):
+    num_mutacoes = int(len(solucao)/10) # mutar 50% dos genes
+    for i in range(num_mutacoes):
+        random_index = random.randint(0, len(solucao)-1)
+        solucao[random_index] = random.randint(0, num_dim-1)
+    #print("solucao: " + str(type(solucao)) + " -> " + str(solucao))
+    #print("solucao[0]: " + str(type(solucao[0])) + " -> " + str(solucao[0]))
     return solucao
 
 # ordena as solucoes de uma populacao com base nos seus scores
