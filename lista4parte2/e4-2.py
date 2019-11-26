@@ -30,7 +30,7 @@ NEW_NUM_DIM = 100 # num de genes (features) escolhidos do total
 # 3500 nao mt -> 0.93
 
 POPULATION_SIZE = 50
-NUM_GENERATIONS = 150#100
+NUM_GENERATIONS = 10#100
 # parametros 'variaveis' do alg genetico
 PROB_MUTACAO = 0.2 # chance de ocorrer uma mutacao em um novo individuo
 NUM_MUTACOES = 10 # numero de genes mutados no evento de uma mutacao
@@ -59,8 +59,8 @@ def alg_genetico(points, labels):
         
     # sort population to get the best solution
     population, scores = sort_population(population, scores)
+    #print("DEBUG final scores: "+str(scores))
     best_solution = population[0].astype(int)
-    print(scores)
 
     classes, _ = k_means(2, points[:, best_solution])
     #best_solution_score = get_clustering_score(classes, labels)
@@ -83,9 +83,7 @@ def evaluate_population(population, points, labels):
         # evaluate solution
         classes, _ = k_means(2, new_points)
         # avalia cada solucao em sextuplicata
-        scores[i] = np.mean([get_clustering_score(classes, labels) for i in range(30)])
-        #print("DEBUG scores[i]")
-        #print(scores[i])
+        scores[i] = np.mean([get_clustering_score(classes, labels) for j in range(30)])
 
     return scores
 
@@ -315,7 +313,7 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 best_solution, best_solution_score = alg_genetico(points, labels)
 # TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
 # TODO: Faça um gráfico demonstrando a convergência ao longo das 100 gerações (considere a repetição que obteve melhor aptidão ao final). 
-print("\n\n...Melhor selecao de genes encontrada: " + str(best_solution))
+print("\n\n...Melhor selecao de genes encontrada:\n" + str(best_solution))
 print("...score: " + str(best_solution_score))
 endTime = time.time()
 totalTime = endTime - startTime
