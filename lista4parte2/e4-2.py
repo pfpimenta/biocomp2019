@@ -11,7 +11,6 @@
 #######################################################
 ## imports
 import random
-import csv
 import numpy as np
 import pandas
 import time
@@ -20,17 +19,19 @@ import time
 ## parametros
 
 # parametros fixos do alg genetico
-NEW_NUM_DIM = 100 # num de genes (features) escolhidos do total
-# 5  -> 0.95
-# 10  -> 0.97
-# 50 mt bom -> 1.0
-# 150  -> 1.0
-# 500  -> 0.97
-# 1500  -> 0.95
-# 3500 nao mt -> 0.93
+NEW_NUM_DIM = 23 # num de genes (features) escolhidos do total
+# 5 -> 0.95
+# 10 -> 0.97
+# 15 -> 1.0
+# 50 -> 1.0
+# 150 -> 1.0
+# 500 -> 0.97
+# 1500 -> 0.95
+# 3572 -> 0.93
 
-POPULATION_SIZE = 50
-NUM_GENERATIONS = 10#100
+POPULATION_SIZE = 50 # tem q ser 50
+NUM_GENERATIONS = 100 # tem q ser 100
+
 # parametros 'variaveis' do alg genetico
 PROB_MUTACAO = 0.2 # chance de ocorrer uma mutacao em um novo individuo
 NUM_MUTACOES = 10 # numero de genes mutados no evento de uma mutacao
@@ -48,25 +49,30 @@ def alg_genetico(points, labels):
 
     # populacao aleatoria inicial
     population = np.array([random.sample(range(num_dim), NEW_NUM_DIM) for i in range(POPULATION_SIZE)])
-    # print(np.shape(population)) # (50, 3572) # DEBUG
+    melhores_scores = []
+    scores_medias = []
 
     for generation in range(NUM_GENERATIONS):
         # avalia populacao
         scores = evaluate_population(population, points, labels)
-        print("DEBUG scores: "+str(np.shape(scores))+" mean score: % .4f max score: % .4f min score: % .4f"%(np.mean(scores),np.max(scores), np.min(scores)))
+        print("Generation "+str(generation)+" scores: "+str(np.shape(scores))+"  mean score: % .4f  max score: % .4f  min score: % .4f"%(np.mean(scores),np.max(scores), np.min(scores)))
         # gera nova populacao
         population = generate_new_population(population, scores, num_dim)
+
+        # pra gerar o grafico q o dorn pediu:
+        melhores_scores.append(np.max(scores))
+        scores_medias.append(np.mean(scores))
         
     # sort population to get the best solution
     population, scores = sort_population(population, scores)
-    #print("DEBUG final scores: "+str(scores))
     best_solution = population[0].astype(int)
-
     classes, _ = k_means(2, points[:, best_solution])
-    #best_solution_score = get_clustering_score(classes, labels)
-    #best_solution_score = np.mean([get_clustering_score(classes, labels) for i in range(6)]) #6
     best_solution_score = scores[0]
-    # TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
+
+    print("melhores_scores")
+    print(melhores_scores)
+    print("scores_medias")
+    print(scores_medias)
 
     return best_solution, best_solution_score
 
@@ -165,10 +171,11 @@ def crossover(solucao_a, solucao_b):
     size = len(solucao_a)
     resultado = np.empty((size)).astype(int)
 
-    # crossover simples de teste
-    metade = int(size/2)
-    resultado[:metade] = solucao_a[:metade]
-    resultado[metade:] = solucao_a[metade:]
+    #separacao = int(size/2) # crossover simples
+    separacao = random.randint(1, size-2) # crossover 2.0 ihaaaa
+
+    resultado[:separacao] = solucao_a[:separacao]
+    resultado[separacao:] = solucao_a[separacao:]
 
     return resultado
 
@@ -309,7 +316,6 @@ print("rodando algoritmo genetico...")
 startTime = time.time() # medir o tempo de execucao a partir daqui
 
 # get melhor combinaçao de 3572 genes
-#best_solution = alg_genetico(points, labels)
 best_solution, best_solution_score = alg_genetico(points, labels)
 # TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
 # TODO: Faça um gráfico demonstrando a convergência ao longo das 100 gerações (considere a repetição que obteve melhor aptidão ao final). 
