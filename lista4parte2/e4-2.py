@@ -19,18 +19,10 @@ import time
 ## parametros
 
 # parametros fixos do alg genetico
-NEW_NUM_DIM = 23 # num de genes (features) escolhidos do total
-# 5 -> 0.95
-# 10 -> 0.97
-# 15 -> 1.0
-# 50 -> 1.0
-# 150 -> 1.0
-# 500 -> 0.97
-# 1500 -> 0.95
-# 3572 -> 0.93
-
 POPULATION_SIZE = 50 # tem q ser 50
 NUM_GENERATIONS = 100 # tem q ser 100
+NEW_NUM_DIM = 23 # num de genes (features) escolhidos do total
+# 5 -> 0.95 # 10 -> 0.97 # 15 -> 1.0 # 50 -> 1.0 # 150 # -> 1.0 # 500 -> 0.97 # 1500 -> 0.95 # 3572 -> 0.93
 
 # parametros 'variaveis' do alg genetico
 PROB_MUTACAO = 0.2 # chance de ocorrer uma mutacao em um novo individuo
@@ -40,11 +32,23 @@ NUM_SCORE_MEAN = 50 # numero de vezes a validar uma solucao pra fazer o score
 #######################################################
 ## funcoes
 
+# printa os parametros do algoritmo genetico
+def print_params():
+    print("Parametros do algoritmo genetico:")
+    print("POPULATION_SIZE %i" % POPULATION_SIZE)
+    print("NUM_GENERATIONS %i" % NUM_GENERATIONS)
+    print("NEW_NUM_DIM %i" % NEW_NUM_DIM)
+    print("PROB_MUTACAO %f" % PROB_MUTACAO)
+    print("NUM_MUTACOES %i" % NUM_MUTACOES)
+    print("NUM_SCORE_MEAN %i" % NUM_SCORE_MEAN)
+
 # retorna um conjunto reduzido de genes
 # que separe o melhor possivel o conjunto de amostras
 # de acordo com os rotulos (ALL e AML)
 def alg_genetico(points, labels):
-    
+
+    print_params()
+
     num_points, num_dim = np.shape(points)
 
     # populacao aleatoria inicial
