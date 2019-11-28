@@ -33,9 +33,9 @@ Aplicação do K-Means numa base de dados com 72 amostras de microarray com expr
 Comparação dos resultados do K-Means com os rótulos das amostras (ALL ou AML).
 
 ### Lista 4 parte 2
-#TODO
-- algoritmo genetico pra selecionar os melhores 3572 genes (features) de 7129
-- usar o k means da parte 1
+Análise de dados de microarray com K-Means (implementado na parte 1) para clusterização.
+Implementacao de um algoritmo genético para seleção de features: selecao dos genes que importam para determinar se uma amostra de microarray corresponde a um cancer do tipo ALL ou AML.
+Plot de um grafico para visualizar a convergencia do algoritmo genetico.
 
 ### e vai ter mais listas depois...
 Aplicacao do metodo Paciencia para esperar o professor nos passar o resto das listas.

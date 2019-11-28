@@ -321,8 +321,6 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 
 # get melhor combinaçao de 3572 genes
 best_solution, best_solution_score = alg_genetico(points, labels)
-# TODO: O algoritmo deve ser executado em sextuplicata sendo calculado a média e o desvio padrão da aptidão do indivı́duo encontrado na última geração.
-# TODO: Faça um gráfico demonstrando a convergência ao longo das 100 gerações (considere a repetição que obteve melhor aptidão ao final). 
 print("\n\n...Melhor selecao de genes encontrada:\n" + str(best_solution))
 print("...score: " + str(best_solution_score))
 endTime = time.time()
