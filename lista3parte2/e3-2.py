@@ -32,7 +32,6 @@ class Tree:
 		self.print_subtree(self.right, 1, self.right_dist)
 		self.print_subtree(self.left, 1, self.left_dist)
 
-
 	# auxiliary printing function
 	def print_subtree(self, subtree, level, dist):
 		if(isinstance(subtree, Tree)):

@@ -37,5 +37,5 @@ Análise de dados de microarray com K-Means (implementado na parte 1) para clust
 Implementacao de um algoritmo genético para seleção de features: selecao dos genes que importam para determinar se uma amostra de microarray corresponde a um cancer do tipo ALL ou AML.
 Plot de um grafico para visualizar a convergencia do algoritmo genetico.
 
-### e vai ter mais listas depois...
-Aplicacao do metodo Paciencia para esperar o professor nos passar o resto das listas.
+### Lista 5
+# TODO asgvadgadoguj
