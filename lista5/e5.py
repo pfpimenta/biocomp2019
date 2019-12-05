@@ -53,10 +53,9 @@ def consensus(sequences, start_positions, motif_lenght):
     # fazer tabela de frequencias
     pfm = get_pfm(sequences) # position frequency matrix
     print(pfm) # DEBUG
-    consensus_string = get_consensus_string(pfm)
-    
-    # get score
-    score = 10 # TODO
+
+    consensus_string, score = get_consensus_string(pfm)
+   
 
     return consensus_string, score
 
@@ -86,11 +85,17 @@ def get_pfm(sequences):
 
 # given a pattern frequency matrix
 # returns the consensus string
+# and its score
 def get_consensus_string(pfm):
     _, motif_lenght = np.shape(pfm)
-    consensus_string = ''  # init 
+    
+    # init 
+    consensus_string = ''
+    score = 0
+    
     for i in range(len(pfm)):
             letra = np.argmax(pfm[:, i]) # acha letra do consenso na posicao i
+            score += pfm[letra, i]
             # TODO : mmudar esse if else feio pra algo bunitu
             if(letra == 0): # a
                 consensus_string += 'a'
@@ -103,7 +108,7 @@ def get_consensus_string(pfm):
             else:
                 print("ihhh deu merda") # nunca chega aqui
 
-    return consensus_string
+    return consensus_string, score
 
 #######################################################
 ## main
@@ -135,9 +140,9 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 # testando o algoritmo consensus "basico"
 # tu da sequences, starting_positions, e  
 motif_lenght = 4
-num_sequences = len(sequences)
+num_sequences = len(sequences_1)
 start_positions = np.zeros(num_sequences) # DEBUG: pegar um vetor s "aleatorio"
-consensus_string, score = find_motif(sequences_1, motif_lenght)
+consensus_string, score = consensus(sequences_1, start_positions, motif_lenght)
 # DEBUG:
 print("\n\n...resultados:")
 print("consensus: " + str(consensus_string))
