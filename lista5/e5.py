@@ -16,21 +16,19 @@ import time
 #######################################################
 ## funcoes
 
-# dadas as sequencias (array de strings) (sequences)
-# e o tamanho do padrao (motif_lenght)
+# dadas as sequencias (array de strings) (sequences),
+# o tamanho do padrao (motif_lenght),
+# e o numero maximo de mutacoes aceitas por padrao achado(mutations_accepted)
 # retorna
 # a string consenso (consensus_string)
 # e o score do consenso (score)
 def find_motif(sequences, motif_lenght):
     num_sequences = len(sequences)
 
-    # get start positions que maximizam o score
-    # start_positions = start_positions(sequences_1) # TODO : a parte mais dificil eh aqui eu acho
-    # DEBUG: pegar um vetor s "aleatorio"
-    start_positions = np.zeros(num_sequences)
-    # print(start_positions) # DEBUG
-
-    consensus_string, score = consensus(sequences, start_positions, motif_lenght)
+    # TODO entender como fazer isso
+    
+    consensus_string = "coco"
+    score = 10
     
     return consensus_string, score
 
@@ -137,6 +135,8 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 # testando o algoritmo consensus "basico"
 # tu da sequences, starting_positions, e  
 motif_lenght = 4
+num_sequences = len(sequences)
+start_positions = np.zeros(num_sequences) # DEBUG: pegar um vetor s "aleatorio"
 consensus_string, score = find_motif(sequences_1, motif_lenght)
 # DEBUG:
 print("\n\n...resultados:")
@@ -149,7 +149,7 @@ print("score: " + str(score))
 # Encontrar o motivo de tamanho 8 aceitando 2 mutações;
 motif_lenght = 8
 mutations_accepted = 2
-#consensus_string, score = motif_finder()
+#consensus_string, score = motif_finder(sequences, motif_lenght, mutations_accepted)
 
 # Encontrar o motivo de tamanho 5 aceitando 3 mutações;
 motif_lenght = 5
