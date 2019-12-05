@@ -5,6 +5,7 @@
 # Pedro Foletto Pimenta, novembro de 2019
 
 # objetivo: TODO
+# consensus algorithm by Hertz, Stromo (1989)
 
 #######################################################
 ## imports
@@ -22,10 +23,46 @@ import time
 # retorna
 # a string consenso (consensus_string)
 # e o score do consenso (score)
-def find_motif(sequences, motif_lenght):
+def consensus(sequences, motif_lenght, mutations_accepted):
+    # algorithm by Hertz, Stromo (1989)
     num_sequences = len(sequences)
-
+    sequence_lenght = len(sequences[0])
+    
     # TODO entender como fazer isso
+    
+    # The  algorithm  starts  by  forming  a  matrix  for  each  of  the
+    # L-mers  in the first sequence 
+    num_matrix = sequence_lenght - motif_lenght + 1
+    matrix = np.zeros((4, motif_lenght)) # just to initiate the matrix_list
+    matrix_list = np.array([matrix for i in range(num_matrix)])
+    score_list = np.zeros(num_matrix) # na verdade uma lista dos valores de "information content" (Schneider et al., 1986)
+    for i in range(num_matrix):
+        cropped_seq = sequences[0][i:i+motif_lenght]
+        print(cropped_seq)
+        m = get_pfm_seq(cropped_seq)
+        score = get_pfm_information_content(m)
+        matrix_list[i] = m
+        score_list[i] = score
+    
+    # DEBUG
+    print("debuggy")
+    print(matrix_list)
+    print(np.shape(matrix_list))
+    
+    # Each  of these matrices is  then  combined  with  each  L-mer in  the
+    # second  sequence  to form    new   matrices   containing   two   L-mers   
+    # TODO
+    for i in range(num_matrix):
+        cropped_seq = sequences[1][i:i+motif_lenght]
+        m = get_pfm_seq(cropped_seq)
+        for i in range(num_matrix):
+                new_matrix = m + matrix_list[i]
+                
+                #best_i_matrix
+    
+    # only  save  the  matrix  with  the  lowest  probability  of 
+    # occurring  by chance,  i.e.  the 'best'  matrix
+    # TODO
     
     consensus_string = "coco"
     score = 10
@@ -37,38 +74,35 @@ def find_motif(sequences, motif_lenght):
 # posicoes iniciais do motif (start_positions)
 # e seu tamanho (motif_lenght)
 # retorna
-# a string consenso (consensus_string)
+# a padrao (motif)
 # e o score do consenso (score)
-def consensus(sequences, start_positions, motif_lenght):
+def get_motif(sequences, start_positions, motif_lenght):
     num_sequences = len(sequences)
     assert(num_sequences == len(start_positions))
 
     # corta as sequencias de acordo com start_positions e motif_lenght
+    cropped_sequences = []
     for i in range(num_sequences):
         start_index = int(start_positions[i])
         end_index = start_index + motif_lenght
         seq = sequences[i]
-        sequences[i] = seq[start_index:end_index]
+        cropped_sequences.append(seq[start_index:end_index])
     
     # fazer tabela de frequencias
-    pfm = get_pfm(sequences) # position frequency matrix
-    print(pfm) # DEBUG
+    pfm = get_pfm_seqs(cropped_sequences) # position frequency matrix
+    
+    motif, score = get_motif_string(pfm)
+    return motif, score
 
-    consensus_string, score = get_consensus_string(pfm)
-   
-
-    return consensus_string, score
-
-# given an array of sequences (array of strings)
+# given an array of sequences (array of strings) already cropped
 # returns the pfm (pattern frequency matrix)
-def get_pfm(sequences):
-    num_sequences = len(sequences)
-    motif_lenght = len(sequences[0])
+def get_pfm_seqs(cropped_sequences):
+    motif_lenght = len(cropped_sequences[0])
     
     pfm = np.zeros((4, motif_lenght)) # init table
 
     # fill table
-    for seq in sequences:
+    for seq in cropped_sequences:
         for i in range(motif_lenght):
             # TODO : refazer esse if feio de um jeito elegante kk
             if(seq[i] == 'a'):
@@ -83,14 +117,46 @@ def get_pfm(sequences):
                 print("ihhh deu merda")
     return pfm
 
+# given a sequence already cropped (string)
+# returns the pfm (pattern frequency matrix)
+def get_pfm_seq(cropped_seq):
+    motif_lenght = len(cropped_seq)
+    
+    pfm = np.zeros((4, motif_lenght)) # init table
+
+    # fill table
+    for i in range(motif_lenght):
+        # TODO : refazer esse if feio de um jeito elegante kk
+        if(cropped_seq[i] == 'a'):
+            pfm[0, i] += 1
+        elif(cropped_seq[i] == 'c'):
+            pfm[1, i] += 1
+        elif(cropped_seq[i] == 'g'):
+            pfm[2, i] += 1
+        elif(cropped_seq[i] == 't'):
+            pfm[3, i] += 1
+        else:
+            print("ihhh deu merda")
+    return pfm
+
+def get_pfm_information_content(pfm):
+    
+    _, motif_lenght = np.shape(pfm)
+    print(pfm)
+    print(motif_lenght)
+    
+    for i in range(motif_lenght):
+        pass
+    return 0
+
 # given a pattern frequency matrix
-# returns the consensus string
+# returns the motif string ("consensus")
 # and its score
-def get_consensus_string(pfm):
+def get_motif_string(pfm):
     _, motif_lenght = np.shape(pfm)
     
     # init 
-    consensus_string = ''
+    motif = ''
     score = 0
     
     for i in range(len(pfm)):
@@ -98,17 +164,17 @@ def get_consensus_string(pfm):
             score += pfm[letra, i]
             # TODO : mmudar esse if else feio pra algo bunitu
             if(letra == 0): # a
-                consensus_string += 'a'
+                motif += 'a'
             elif(letra == 1): # c
-                consensus_string += 'c'
+                motif += 'c'
             elif(letra == 2): # g
-                consensus_string += 'g'
+                motif += 'g'
             elif(letra == 3): # t
-                consensus_string += 't'
+                motif += 't'
             else:
                 print("ihhh deu merda") # nunca chega aqui
 
-    return consensus_string, score
+    return motif, score
 
 #######################################################
 ## main
@@ -137,16 +203,24 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 
 
 # DEBUG TEST
-# testando o algoritmo consensus "basico"
+# testando o algoritmo find_motif (consensus "basico")
 # tu da sequences, starting_positions, e  
 motif_lenght = 4
 num_sequences = len(sequences_1)
 start_positions = np.zeros(num_sequences) # DEBUG: pegar um vetor s "aleatorio"
-consensus_string, score = consensus(sequences_1, start_positions, motif_lenght)
+motif, score = get_motif(sequences_1, start_positions, motif_lenght)
 # DEBUG:
 print("\n\n...resultados:")
-print("consensus: " + str(consensus_string))
+print("motif: " + str(motif))
 print("score: " + str(score))
+
+## DEBUG test
+#for i in range(num_sequences):
+#    num_seqs = i+1
+#    print(num_seqs)
+#    seqs = sequences_1[:num_seqs]
+#    start_positions = np.zeros(num_seqs)
+#    motif, score = get_motif(seqs, start_positions, motif_lenght)
 
 
 ## exercicio a:
@@ -154,7 +228,7 @@ print("score: " + str(score))
 # Encontrar o motivo de tamanho 8 aceitando 2 mutações;
 motif_lenght = 8
 mutations_accepted = 2
-#consensus_string, score = motif_finder(sequences, motif_lenght, mutations_accepted)
+consensus_string, score = consensus(sequences_1, motif_lenght, mutations_accepted)
 
 # Encontrar o motivo de tamanho 5 aceitando 3 mutações;
 motif_lenght = 5
