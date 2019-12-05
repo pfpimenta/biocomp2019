@@ -26,9 +26,7 @@ def consensus(sequences, motif_lenght, mutations_accepted):
     # algorithm by Hertz, Stromo (1989)
     num_sequences = len(sequences)
     sequence_lenght = len(sequences[0])
-    
-    # TODO entender como fazer isso
-    
+        
     # The  algorithm  starts  by  forming  a  matrix  for  each  of  the
     # L-mers  in the first sequence 
     num_matrix = sequence_lenght - motif_lenght + 1
@@ -43,44 +41,37 @@ def consensus(sequences, motif_lenght, mutations_accepted):
         matrix_list[i] = m
         score_list[i] = score
     
-    # DEBUG
-    print("debuggy")
-    print(matrix_list)
-    print(np.shape(matrix_list))
-    
     # Each  of these matrices is  then  combined  with  each  L-mer in  the
-    # second  sequence  to form    new   matrices   containing   two   L-mers   
-    # TODO
+    # next  sequence  to form    new   matrices   containing   two   L-mers   
     for seq_idx in range(1, num_sequences):
         for i in range(num_matrix):
-            cropped_seq = sequences[seq_idx][i:i+motif_lenght]
-            m = get_pfm_seq(cropped_seq)
-            
+            seq = sequences[seq_idx]
             # find best i matrix (highest score)
             best_score = 0
             best_i_matrix = m # initialization
-            for i in range(num_matrix):
+            for j in range(num_matrix):
+                    cropped_seq = seq[j:j+motif_lenght]
+                    m = get_pfm_seq(cropped_seq)
                     new_matrix = m + matrix_list[i]
-#                    print("a lenda do debug da meia noite")
-#                    print((matrix_list[i]))
-#                    print((m))
-#                    print((new_matrix))
-#                    print(np.shape(matrix_list[i]))
-#                    print(np.shape(m))
-#                    print(np.shape(new_matrix))
                     score = get_pfm_information_content(new_matrix)
                     if(score > best_score):
                         best_score = score
                         best_i_matrix = new_matrix
-                    matrix_list[i] = best_i_matrix # update matrix list
+            matrix_list[i] = best_i_matrix # update matrix list
+            score_list[i] = best_score
+    
+    #print("final matrix_list:\n"+str(matrix_list)) # DEBUG
     
     best_matrix_index = np.argmax(score_list)
     best_matrix = matrix_list[best_matrix_index]
-    best_score = matrix_list[best_matrix_index] # na verdade best information content
+    best_score = score_list[best_matrix_index] # na verdade best information content
 
     motif, score = get_motif_string(best_matrix)
+    #print("best_matrix: "+str(best_matrix)) 
+    #print("best_matrix shape: "+str(np.shape(best_matrix)))# DEBUG
+    #print("motif: "+str(motif))
     
-    return motif, score
+    return motif, [best_score, score] # TODO
 
 # dadas
 # as sequencias (sequences),
@@ -155,22 +146,20 @@ def get_pfm_seq(cropped_seq):
 def get_pfm_information_content(pfm):
     
     _, motif_lenght = np.shape(pfm)
-    #print(pfm)
-    #print(motif_lenght)
     
-    num_sequences = np.sum(pfm[:, 0])
-    print("debug num_sequences: " + str(num_sequences))
+    #num_sequences = np.sum(pfm[:, 0]) # sepa n precisa msm
+    #print("debug num_sequences: " + str(num_sequences))
     
-    information_content = 0
+    information_content = 0.0
     for i in range(motif_lenght):
         for base in range(4): # actg
             #pfm[b, i] * math.log2(pfm[b, i]/genomic_frequency[base]) # nao precisa ja que genomic_frequency seria semper 0.25
             if(pfm[base, i] != 0):
                 information_content += pfm[base, i] * math.log2(pfm[base, i])
-            
-    information_content = information_content/num_sequences # n sei se precisa hein
-            
-    return 0
+
+    #information_content = information_content/num_sequences # n sei se precisa hein
+    
+    return information_content
 
 # given a pattern frequency matrix
 # returns the motif string ("consensus")
@@ -182,7 +171,7 @@ def get_motif_string(pfm):
     motif = ''
     score = 0
     
-    for i in range(len(pfm)):
+    for i in range(motif_lenght):
             letra = np.argmax(pfm[:, i]) # acha letra do consenso na posicao i
             score += pfm[letra, i]
             # TODO : mmudar esse if else feio pra algo bunitu
@@ -199,6 +188,10 @@ def get_motif_string(pfm):
 
     return motif, score
 
+def print_results(motif_lenght, mutations_accepted, motif, score):
+    print("\n...resultados para motif_lenght = "+str(motif_lenght)+" e mutations_accepted = "+str(mutations_accepted) +":")
+    print("motif: " + str(motif))
+    print("score: " + str(score))
 #######################################################
 ## main
 
@@ -229,13 +222,13 @@ startTime = time.time() # medir o tempo de execucao a partir daqui
 # testando o algoritmo find_motif (consensus "basico")
 # tu da sequences, starting_positions, e  
 motif_lenght = 4
+mutations_accepted = 2 # ????????????? TODO
 num_sequences = len(sequences_1)
 start_positions = np.zeros(num_sequences) # DEBUG: pegar um vetor s "aleatorio"
 motif, score = get_motif(sequences_1, start_positions, motif_lenght)
 # DEBUG:
-print("\n\n...resultados:")
-print("motif: " + str(motif))
-print("score: " + str(score))
+print("\nDEBUG:")
+print_results(motif_lenght, mutations_accepted, motif, score)
 
 ## DEBUG test
 #for i in range(num_sequences):
@@ -247,33 +240,40 @@ print("score: " + str(score))
 
 
 ## exercicio a:
+print("\n\nresultados para o primeiro conjunto de sequencias:")
 
 # Encontrar o motivo de tamanho 8 aceitando 2 mutações;
 motif_lenght = 8
-mutations_accepted = 2
+mutations_accepted = 2 # ????????????? TODO
 motif, score = consensus(sequences_1, motif_lenght, mutations_accepted)
-print("\n\n...resultados:")
-print("motif: " + str(motif))
-print("score: " + str(score))
+print_results(motif_lenght, mutations_accepted, motif, score)
 
 # Encontrar o motivo de tamanho 5 aceitando 3 mutações;
 motif_lenght = 5
 mutations_accepted = 3
-# consensus_string, score = consensus(sequences_1, )
+motif, score = consensus(sequences_1, motif_lenght, mutations_accepted)
+print_results(motif_lenght, mutations_accepted, motif, score)
 
 # Encontrar o motivo de tamanho 3 aceitando 1 mutação;
 motif_lenght = 3
 mutations_accepted = 1
-# consensus_string, score = consensus(sequences_1, )
+motif, score = consensus(sequences_1, motif_lenght, mutations_accepted)
+print_results(motif_lenght, mutations_accepted, motif, score)
 
 ## exercicio b:
+print("\n\nresultados para o segundo conjunto de sequencias:")
 # Encontrar o motivo de tamanho 3 aceitando 1 mutações;
 motif_lenght = 3
 mutations_accepted = 1
+motif, score = consensus(sequences_1, motif_lenght, mutations_accepted)
+print_results(motif_lenght, mutations_accepted, motif, score)
+
 # Encontrar o motivo de tamanho 5 aceitando 2 mutações;
 motif_lenght = 5
 mutations_accepted = 2
+motif, score = consensus(sequences_1, motif_lenght, mutations_accepted)
+print_results(motif_lenght, mutations_accepted, motif, score)
 
 endTime = time.time()
 totalTime = endTime - startTime
-print("...tempo de execucao: %.3f segundos"%(totalTime))
+print("\n\n...tempo de execucao: %.3f segundos"%(totalTime))
