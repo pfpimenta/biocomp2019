@@ -9,10 +9,9 @@
 
 #######################################################
 ## imports
-import random
 import numpy as np
-import pandas
 import time
+import math
 
 #######################################################
 ## funcoes
@@ -38,7 +37,7 @@ def consensus(sequences, motif_lenght, mutations_accepted):
     score_list = np.zeros(num_matrix) # na verdade uma lista dos valores de "information content" (Schneider et al., 1986)
     for i in range(num_matrix):
         cropped_seq = sequences[0][i:i+motif_lenght]
-        print(cropped_seq)
+        #print(cropped_seq)
         m = get_pfm_seq(cropped_seq)
         score = get_pfm_information_content(m)
         matrix_list[i] = m
@@ -52,22 +51,36 @@ def consensus(sequences, motif_lenght, mutations_accepted):
     # Each  of these matrices is  then  combined  with  each  L-mer in  the
     # second  sequence  to form    new   matrices   containing   two   L-mers   
     # TODO
-    for i in range(num_matrix):
-        cropped_seq = sequences[1][i:i+motif_lenght]
-        m = get_pfm_seq(cropped_seq)
+    for seq_idx in range(1, num_sequences):
         for i in range(num_matrix):
-                new_matrix = m + matrix_list[i]
-                
-                #best_i_matrix
+            cropped_seq = sequences[seq_idx][i:i+motif_lenght]
+            m = get_pfm_seq(cropped_seq)
+            
+            # find best i matrix (highest score)
+            best_score = 0
+            best_i_matrix = m # initialization
+            for i in range(num_matrix):
+                    new_matrix = m + matrix_list[i]
+#                    print("a lenda do debug da meia noite")
+#                    print((matrix_list[i]))
+#                    print((m))
+#                    print((new_matrix))
+#                    print(np.shape(matrix_list[i]))
+#                    print(np.shape(m))
+#                    print(np.shape(new_matrix))
+                    score = get_pfm_information_content(new_matrix)
+                    if(score > best_score):
+                        best_score = score
+                        best_i_matrix = new_matrix
+                    matrix_list[i] = best_i_matrix # update matrix list
     
-    # only  save  the  matrix  with  the  lowest  probability  of 
-    # occurring  by chance,  i.e.  the 'best'  matrix
-    # TODO
+    best_matrix_index = np.argmax(score_list)
+    best_matrix = matrix_list[best_matrix_index]
+    best_score = matrix_list[best_matrix_index] # na verdade best information content
+
+    motif, score = get_motif_string(best_matrix)
     
-    consensus_string = "coco"
-    score = 10
-    
-    return consensus_string, score
+    return motif, score
 
 # dadas
 # as sequencias (sequences),
@@ -142,11 +155,21 @@ def get_pfm_seq(cropped_seq):
 def get_pfm_information_content(pfm):
     
     _, motif_lenght = np.shape(pfm)
-    print(pfm)
-    print(motif_lenght)
+    #print(pfm)
+    #print(motif_lenght)
     
+    num_sequences = np.sum(pfm[:, 0])
+    print("debug num_sequences: " + str(num_sequences))
+    
+    information_content = 0
     for i in range(motif_lenght):
-        pass
+        for base in range(4): # actg
+            #pfm[b, i] * math.log2(pfm[b, i]/genomic_frequency[base]) # nao precisa ja que genomic_frequency seria semper 0.25
+            if(pfm[base, i] != 0):
+                information_content += pfm[base, i] * math.log2(pfm[base, i])
+            
+    information_content = information_content/num_sequences # n sei se precisa hein
+            
     return 0
 
 # given a pattern frequency matrix
@@ -228,7 +251,10 @@ print("score: " + str(score))
 # Encontrar o motivo de tamanho 8 aceitando 2 mutações;
 motif_lenght = 8
 mutations_accepted = 2
-consensus_string, score = consensus(sequences_1, motif_lenght, mutations_accepted)
+motif, score = consensus(sequences_1, motif_lenght, mutations_accepted)
+print("\n\n...resultados:")
+print("motif: " + str(motif))
+print("score: " + str(score))
 
 # Encontrar o motivo de tamanho 5 aceitando 3 mutações;
 motif_lenght = 5
